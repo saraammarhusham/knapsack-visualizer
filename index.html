@@ -388,6 +388,87 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
       <div class="cc" style="--ca:var(--teal)"><div class="cl">Space (DP)</div><div class="cv" style="color:var(--teal)">O(n&middot;W)</div><div class="cs">Optimisable to O(W)</div></div>
       <div class="cc" style="--ca:var(--red)"><div class="cl">Brute Force</div><div class="cv" style="color:var(--red)">O(2&#8319;)</div><div class="cs">Exponential</div></div>
     </div>
+    <!-- Best / Avg / Worst Case Section -->
+    <div class="chart-area">
+      <div class="stitle">Best, Average &amp; Worst Case Analysis</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+
+        <!-- Best Case -->
+        <div style="background:var(--bg3);border:1px solid var(--green);border-radius:var(--r);padding:14px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--green);opacity:.6"></div>
+          <div style="font-size:.6rem;color:var(--green);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:6px">Best Case</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:800;color:var(--green);margin-bottom:4px">O(n&middot;W)</div>
+          <div style="font-size:.7rem;color:var(--text2);line-height:1.5">Same as worst case &mdash; the table always has (n+1)&times;(W+1) cells regardless of item values. Every cell is visited exactly once.</div>
+          <div style="margin-top:8px;padding:6px 8px;background:rgba(62,207,142,.08);border-left:2px solid var(--green);border-radius:0 4px 4px 0;font-size:.68rem;color:var(--text2)">
+            <strong style="color:var(--green)">When:</strong> Any input &mdash; DP always fills the full table.
+          </div>
+        </div>
+
+        <!-- Average Case -->
+        <div style="background:var(--bg3);border:1px solid var(--yellow);border-radius:var(--r);padding:14px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--yellow);opacity:.6"></div>
+          <div style="font-size:.6rem;color:var(--yellow);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:6px">Average Case</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:800;color:var(--yellow);margin-bottom:4px">O(n&middot;W)</div>
+          <div style="font-size:.7rem;color:var(--text2);line-height:1.5">Still O(nW) &mdash; DP has no early exit. On average, roughly half the items will be included in the optimal set, but all cells are still computed.</div>
+          <div style="margin-top:8px;padding:6px 8px;background:rgba(245,197,66,.08);border-left:2px solid var(--yellow);border-radius:0 4px 4px 0;font-size:.68rem;color:var(--text2)">
+            <strong style="color:var(--yellow)">When:</strong> Random items with mixed weights and values.
+          </div>
+        </div>
+
+        <!-- Worst Case -->
+        <div style="background:var(--bg3);border:1px solid var(--red);border-radius:var(--r);padding:14px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--red);opacity:.6"></div>
+          <div style="font-size:.6rem;color:var(--red);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:6px">Worst Case</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:800;color:var(--red);margin-bottom:4px">O(n&middot;W)</div>
+          <div style="font-size:.7rem;color:var(--text2);line-height:1.5">When all items have weight=1 and W is large &mdash; every cell requires a max() comparison with no items being skipped due to weight overflow.</div>
+          <div style="margin-top:8px;padding:6px 8px;background:rgba(244,110,110,.08);border-left:2px solid var(--red);border-radius:0 4px 4px 0;font-size:.68rem;color:var(--text2)">
+            <strong style="color:var(--red)">When:</strong> All weights = 1, large W. Try the "Worst Case" preset!
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Summary comparison table -->
+      <table style="width:100%;border-collapse:collapse;font-size:.75rem;font-family:'JetBrains Mono',monospace">
+        <thead>
+          <tr style="background:var(--bg3)">
+            <th style="padding:8px 12px;text-align:left;color:var(--text2);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)">Case</th>
+            <th style="padding:8px 12px;text-align:center;color:var(--text2);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)">Time</th>
+            <th style="padding:8px 12px;text-align:center;color:var(--text2);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)">Space</th>
+            <th style="padding:8px 12px;text-align:center;color:var(--text2);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)">Traceback</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--text2);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)">Trigger</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+            <td style="padding:8px 12px;color:var(--green);font-weight:700">Best</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n&middot;W)</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n&middot;W)</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n)</td>
+            <td style="padding:8px 12px;color:var(--text2)">Any input &mdash; always fills full table</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+            <td style="padding:8px 12px;color:var(--yellow);font-weight:700">Average</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n&middot;W)</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n&middot;W)</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n)</td>
+            <td style="padding:8px 12px;color:var(--text2)">Mixed weights &amp; values</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px;color:var(--red);font-weight:700">Worst</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n&middot;W)</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n&middot;W)</td>
+            <td style="padding:8px 12px;text-align:center;color:var(--text)">O(n)</td>
+            <td style="padding:8px 12px;color:var(--text2)">All weights=1, W large</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:10px;padding:9px 12px;background:rgba(79,156,249,.08);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;font-size:.75rem;color:var(--text2)">
+        &#128161; <strong style="color:var(--accent)">Key insight:</strong> Unlike sorting algorithms (O(n log n) best, O(n&sup2;) worst), DP Knapsack has the <em>same</em> complexity in all cases because it always fills the entire (n+1)&times;(W+1) table with no early exit or pruning.
+      </div>
+    </div>
+
     <div class="chart-area">
       <div class="stitle">Growth Curve: Operations vs Input Size</div>
       <div class="ctrls">
