@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0/1 Knapsack Visualizer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
+:root {
+  --bg:#0d0f14; --bg2:#13161d; --bg3:#1a1e28; --bg4:#222735;
+  --border:#2a2f3e; --text:#e2e6f0; --text2:#8892a4;
+  --accent:#4f9cf9; --green:#3ecf8e; --red:#f46e6e;
+  --yellow:#f5c542; --orange:#f58742; --purple:#b06af3; --teal:#30d5c8;
+  --cell:52px; --r:8px; --tr:200ms cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;align-items:center;gap:14px}
+header h1{font-size:1.2rem;font-weight:800;letter-spacing:-.02em}
+header h1 span{color:var(--accent)}
+.badge{background:var(--bg4);border:1px solid var(--border);color:var(--text2);font-size:.68rem;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:20px}
+.status-badge{margin-left:auto;padding:4px 14px;border-radius:20px;font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;transition:background var(--tr),color var(--tr)}
+.s-idle{background:#1e2230;color:var(--text2)}
+.s-ready{background:#1a2a40;color:var(--accent)}
+.s-playing{background:#1a2e26;color:var(--green)}
+.s-paused{background:#2e2a1a;color:var(--yellow)}
+.s-done{background:#2e1e36;color:var(--purple)}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 18px;overflow-x:auto}
+.tab{padding:10px 16px;font-size:.76rem;font-weight:700;letter-spacing:.04em;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);transition:color var(--tr),border-color var(--tr);white-space:nowrap}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text)}
+
+/* LAYOUT */
+.main{display:grid;grid-template-columns:420px 1fr;height:calc(100vh - 98px);overflow:hidden}
+@media(max-width:980px){
+  .main{grid-template-columns:1fr;height:auto;overflow:visible}
+  .left{border-right:none;border-bottom:1px solid var(--border)}
+  .right-panel{min-height:60vh;overflow:visible}
+  .tab-content{overflow:visible}
+  .controls-row{grid-template-columns:repeat(3,1fr)}
+  .complexity-cards{grid-template-columns:1fr 1fr}
+  .compare-grid{grid-template-columns:1fr}
+  .preset-grid{grid-template-columns:1fr 1fr}
+  header{flex-wrap:wrap;padding:10px 14px;gap:8px}
+  header h1{font-size:1rem}
+  .tabs{gap:0;padding:0 8px}
+  .tab{padding:9px 10px;font-size:.7rem}
+  .dp-wrap{overflow-x:auto}
+  .items-row{gap:8px}
+}
+
+/* LEFT PANEL */
+.left{background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+.psec{padding:14px 16px;border-bottom:1px solid var(--border)}
+.psec:last-child{border-bottom:none}
+.stitle{font-size:.66rem;font-weight:700;letter-spacing:.1em;color:var(--text2);text-transform:uppercase;margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.stitle::before{content:'';width:3px;height:11px;background:var(--accent);border-radius:2px}
+
+/* INPUTS */
+.igrp{margin-bottom:10px}
+label{font-size:.72rem;color:var(--text2);display:block;margin-bottom:5px;font-weight:600}
+input[type=number]{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:var(--r);font-family:'JetBrains Mono',monospace;font-size:.8rem;transition:border-color var(--tr)}
+input:focus{outline:none;border-color:var(--accent)}
+.itbl{width:100%;border-collapse:collapse;font-size:.76rem;margin-bottom:8px}
+.itbl th{background:var(--bg3);color:var(--text2);padding:6px 8px;font-size:.62rem;letter-spacing:.07em;text-transform:uppercase;text-align:center}
+.itbl td{padding:5px 4px;text-align:center}
+.itbl input{width:54px;text-align:center;padding:5px 5px;font-size:.76rem;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:5px;font-family:'JetBrains Mono',monospace}
+.itbl input:focus{outline:none;border-color:var(--accent)}
+.ilbl{background:var(--bg4);border-radius:4px;padding:3px 7px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent)}
+.rowbtns{display:flex;gap:6px;margin-bottom:8px}
+.preset-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pbtn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:7px 6px;border-radius:var(--r);cursor:pointer;font-size:.7rem;font-family:'Syne',sans-serif;font-weight:700;text-align:center;transition:all var(--tr);line-height:1.4}
+.pbtn:hover{border-color:var(--accent);color:var(--accent);background:var(--bg4)}
+
+/* BUTTONS */
+.btn{padding:8px 13px;border-radius:var(--r);border:1px solid var(--border);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:.74rem;letter-spacing:.04em;transition:all var(--tr);display:inline-flex;align-items:center;gap:5px}
+.btn-p{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-p:hover{filter:brightness(1.15)}
+.btn-g{background:var(--bg3);color:var(--text)}
+.btn-g:hover{border-color:var(--accent);color:var(--accent)}
+.btn-d{background:var(--bg3);color:var(--red);border-color:var(--border)}
+.btn-d:hover{background:#2e1a1a;border-color:var(--red)}
+.btn:disabled{opacity:.35;cursor:not-allowed;filter:none}
+.controls-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
+.controls-row .btn{justify-content:center;padding:9px 2px;font-size:.68rem}
+
+/* SPEED */
+.srow{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.srow label{margin:0;min-width:46px}
+input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--bg4);border-radius:2px;border:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer}
+.sval{font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--accent);min-width:34px;text-align:right}
+.step-ctr{font-family:'JetBrains Mono',monospace;font-size:.88rem;text-align:center;padding:8px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);letter-spacing:.05em}
+.step-ctr span{color:var(--accent);font-weight:800}
+
+/* STATS */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.scard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px}
+.slbl{font-size:.6rem;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.sval2{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:800;color:var(--accent)}
+
+/* EXPLANATION BOX */
+.exbox{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);overflow:hidden;transition:border-left-color 200ms ease,background 200ms ease;font-size:.79rem;line-height:1.7;min-height:64px}
+.exbox .exh{display:flex;align-items:center;gap:8px;padding:6px 12px 5px;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.18);font-size:.66rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.05em}
+.exbox .exb{padding:10px 13px 11px;animation:exenter 200ms ease}
+@keyframes exenter{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+.exbox.ex-inc{border-left-color:var(--green);background:#0f1d16}
+.exbox.ex-exc{border-left-color:var(--red);background:#1d0f0f}
+.exbox.ex-cmp{border-left-color:var(--accent);background:#0f1520}
+.exbox.ex-tb{border-left-color:var(--purple);background:#140f1d}
+.exbox.ex-done{border-left-color:var(--yellow);background:#1d1b0f}
+.exbox.ex-init{border-left-color:var(--text2);background:var(--bg3)}
+.xtag{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:10px}
+.xt-inc{background:#1d3828;color:var(--green);border:1px solid #2a5038}
+.xt-exc{background:#2e1818;color:var(--red);border:1px solid #503030}
+.xt-cmp{background:#151f30;color:var(--accent);border:1px solid #253050}
+.xt-tb{background:#1a1030;color:var(--purple);border:1px solid #302050}
+.xt-done{background:#2a2410;color:var(--yellow);border:1px solid #504020}
+.xt-init{background:#1a1e28;color:var(--text2);border:1px solid var(--border)}
+.ev{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--yellow)}
+.ec{font-family:'JetBrains Mono',monospace;font-weight:700;color:#89b4fa}
+.ei{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--teal)}
+.ew{font-weight:700;color:var(--green)}
+.el{font-weight:700;color:var(--red)}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;overflow:hidden}
+.tab-content{display:none;flex:1;overflow:auto;padding:16px}
+.tab-content.active{display:flex;flex-direction:column;gap:14px}
+
+/* LEGEND */
+.legend{display:flex;gap:10px 14px;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:9px 14px;align-items:center}
+.li{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--text2)}
+.ld{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+.ltitle{font-size:.59rem;color:var(--text2);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-right:4px}
+
+/* ITEMS */
+.items-row{display:flex;gap:10px;flex-wrap:wrap;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);min-height:70px;align-items:flex-start}
+.ibox{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:9px 13px 8px;transition:all 220ms ease;min-width:66px;cursor:default}
+.ibox:hover{border-color:var(--text2);transform:translateY(-1px)}
+.ibox .in{font-size:.59rem;color:var(--text2);font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.ibox .iv{font-size:.93rem;font-weight:800;color:var(--text);line-height:1.2}
+.ibox .iw{font-size:.7rem;color:var(--text2)}
+.ibox .ir{font-size:.59rem;color:var(--text2);font-family:'JetBrains Mono',monospace}
+.ibox .ist{font-size:.6rem;margin-top:2px;font-weight:800}
+.ibox.sel{border-color:var(--green);background:#182e22;box-shadow:0 0 14px #3ecf8e28}
+.ibox.sel .iv{color:var(--green)}
+.ibox.act{border-color:var(--accent);background:#111d30;box-shadow:0 0 12px #4f9cf928}
+
+/* KNAPSACK BAR */
+.kv{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px}
+.klbl{font-size:.71rem;color:var(--text2);display:flex;justify-content:space-between}
+.kbw{height:34px;background:var(--bg4);border-radius:6px;overflow:hidden;margin-top:6px}
+.kb{height:100%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:6px;transition:width 400ms ease}
+.kb.ov{background:linear-gradient(90deg,var(--red),var(--orange))}
+
+/* DP TABLE */
+.dp-wrap{overflow:auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px}
+.dp-cont{min-width:max-content}
+.dp-row{display:flex;gap:3px;margin-bottom:3px}
+.dp-cell{width:var(--cell);height:var(--cell);display:flex;align-items:center;justify-content:center;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;background:var(--bg3);border:1px solid var(--border);transition:background 180ms ease,border-color 180ms ease,transform 180ms ease,color 180ms ease;cursor:pointer;position:relative;user-select:none}
+.dp-cell:not(.hdr):hover{transform:scale(1.06);z-index:3;border-color:rgba(255,255,255,.2)}
+.dp-cell.hdr{background:var(--bg4);color:var(--text2);font-size:.63rem;cursor:default}
+.dp-cell.hdr:hover{transform:none}
+.dp-cell.cur{background:#1a2e40;border-color:var(--accent);color:var(--accent);transform:scale(1.08);z-index:2}
+.dp-cell.fil{background:#1a2a3a;border-color:#2a4060;color:var(--text)}
+.dp-cell.inc{background:#182e22;border-color:var(--green);color:var(--green)}
+.dp-cell.trc{background:#2a2230;border-color:var(--purple);color:var(--purple)}
+
+/* PSEUDOCODE */
+.pp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);font-family:'JetBrains Mono',monospace;font-size:.77rem;overflow-y:auto;overflow-x:auto;max-height:360px;scroll-behavior:smooth}
+.psec-hdr{font-family:'Syne',sans-serif;font-size:.59rem;font-weight:800;letter-spacing:.14em;padding:5px 12px 4px 40px;border-top:1px solid var(--border);border-left:3px solid;background:rgba(255,255,255,.02);user-select:none}
+.pline{display:flex;align-items:stretch;border-left:3px solid transparent;transition:background 160ms ease,border-color 160ms ease;cursor:default;position:relative;white-space:nowrap;min-height:27px}
+.pblank{min-height:9px}
+.pline:hover:not(.pblank){background:rgba(79,156,249,.055)}
+.pline.active{background:rgba(79,156,249,.14);border-left-color:var(--accent);animation:ppulse 1.6s ease infinite}
+@keyframes ppulse{0%,100%{background:rgba(79,156,249,.14)}50%{background:rgba(79,156,249,.22)}}
+.pline.active .pln{background:var(--accent);color:#0d0f14;font-weight:700}
+.pln{display:inline-flex;align-items:center;justify-content:center;min-width:35px;padding:4px 0;color:#3d4558;font-size:.63rem;user-select:none;background:var(--bg3);border-right:1px solid var(--border);transition:background 160ms ease,color 160ms ease;flex-shrink:0;align-self:stretch}
+.pcode{display:inline-block;padding:4px 13px 4px 11px;color:#ccd5e8;white-space:pre;line-height:1.55;flex:1}
+.pcode .kw{color:#c792ea;font-style:italic}
+.pcode .cm{color:#404c60}
+.pcode .nu{color:#f5c542}
+.pcode .fn{color:#30d5c8}
+.pcode .va{color:#f8c555}
+.pcode .op{color:#89b4fa}
+.tip-icon{display:none;align-items:center;justify-content:center;width:19px;height:19px;margin:auto 7px auto 0;background:rgba(79,156,249,.15);border:1px solid rgba(79,156,249,.3);border-radius:50%;font-size:.59rem;font-weight:800;color:var(--accent);flex-shrink:0;font-family:'Syne',sans-serif;cursor:help}
+.pline:hover:not(.pblank) .tip-icon{display:inline-flex}
+#ttp{display:none;position:fixed;background:#161c2e;border:1px solid rgba(79,156,249,.5);border-radius:10px;font-family:'Syne',sans-serif;font-size:.74rem;color:var(--text);max-width:300px;min-width:210px;z-index:9999;line-height:1.6;box-shadow:0 12px 40px rgba(0,0,0,.6);pointer-events:none;overflow:hidden}
+#ttp .tt-title{background:rgba(79,156,249,.15);border-bottom:1px solid rgba(79,156,249,.25);padding:6px 12px 5px;font-size:.61rem;font-weight:800;letter-spacing:.1em;color:var(--accent)}
+#ttp .tt-body{padding:8px 12px 10px;color:#c8d0e0;font-size:.73rem;line-height:1.65}
+
+/* HISTORY */
+.htw{max-height:240px;overflow-y:auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r)}
+.htbl{width:100%;border-collapse:collapse;font-size:.72rem;font-family:'JetBrains Mono',monospace}
+.htbl th{position:sticky;top:0;background:var(--bg3);color:var(--text2);padding:6px 8px;text-align:left;font-size:.6rem;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-weight:700;user-select:none}
+.htbl td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+.htbl tbody tr{cursor:pointer;transition:background 120ms ease}
+.htbl tbody tr:hover td{background:rgba(79,156,249,.07)}
+.htbl tbody tr.cur-row td{background:rgba(79,156,249,.12);color:var(--accent)}
+.hchip{display:inline-flex;align-items:center;gap:3px;font-size:.61rem;font-weight:700;font-family:'Syne',sans-serif;padding:2px 6px;border-radius:8px;white-space:nowrap}
+.ch-inc{background:#182e22;color:var(--green);border:1px solid #2a4a36}
+.ch-exc{background:#2e1818;color:var(--red);border:1px solid #4a2828}
+.ch-cmp{background:#151e30;color:var(--accent);border:1px solid #253050}
+.ch-trc{background:#1e1228;color:var(--purple);border:1px solid #342048}
+.ch-ini{background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.ch-don{background:#2a2010;color:var(--yellow);border:1px solid #504020}
+.hprev{display:none;margin-top:6px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);font-size:.73rem;color:var(--text2);line-height:1.5}
+
+/* CLO TABS */
+.chart-area{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:15px}
+.complexity-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:13px;text-align:center;position:relative;overflow:hidden}
+.cc::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--ca,var(--accent));opacity:.6}
+.cc .cl{font-size:.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;font-weight:700}
+.cc .cv{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:700;color:var(--yellow)}
+.cc .cs{font-size:.62rem;color:var(--text2);margin-top:3px}
+.ctrls{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.ctrls label{color:var(--text2);font-size:.72rem;margin:0}
+.ctrls input[type=range]{width:110px}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ccard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:13px}
+.ccard h4{font-size:.8rem;margin-bottom:9px}
+.ccard.win{border-color:var(--green)}
+.ccard.los{border-color:var(--red);opacity:.75}
+.ci{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.76rem;font-family:'JetBrains Mono',monospace}
+.edu{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.edu-hdr{padding:11px 15px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:var(--bg3);transition:background var(--tr);font-weight:700;font-size:.88rem}
+.edu-hdr:hover{background:var(--bg4)}
+.edu-body{padding:15px;font-size:.8rem;line-height:1.7;color:#c0c8d8;display:none}
+.edu-body.open{display:block}
+.edu-body p{margin-bottom:9px}
+.edu-body h4{color:var(--accent);margin-bottom:5px;margin-top:11px;font-size:.82rem}
+.kc{background:var(--bg3);border-left:3px solid var(--yellow);border-radius:0 var(--r) var(--r) 0;padding:9px 13px;margin:7px 0;font-size:.78rem}
+.mb{background:#2e1a1a;border-left:3px solid var(--red);border-radius:0 var(--r) var(--r) 0;padding:9px 13px;margin:7px 0;font-size:.78rem}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border)}
+</style>
+</head>
+<body>
+<div id="ttp"><div class="tt-title" id="tt-title"></div><div class="tt-body" id="tt-body"></div></div>
+
+<header>
+  <h1>0/1 <span>Knapsack</span> Visualizer</h1>
+  <span class="badge">Dynamic Programming &middot; O(nW)</span>
+  <div id="statusBadge" class="status-badge s-idle">IDLE</div>
+</header>
+
+<div class="tabs" id="mainTabs">
+  <div class="tab active" data-tab="viz">&#9654; Visualize</div>
+  <div class="tab" data-tab="clo1">&#128202; Complexity (CLO-1)</div>
+  <div class="tab" data-tab="clo2">&#128269; Sort &amp; Search (CLO-2)</div>
+  <div class="tab" data-tab="clo3">&#129513; DP Paradigm (CLO-3)</div>
+  <div class="tab" data-tab="learn">&#128214; Learn</div>
+</div>
+
+<div class="main">
+<!-- LEFT -->
+<div class="left">
+
+  <div class="psec">
+    <div class="stitle">Items Input</div>
+    <table class="itbl">
+      <thead><tr><th>Item</th><th>Weight</th><th>Value</th></tr></thead>
+      <tbody id="itemRows"></tbody>
+    </table>
+    <div class="rowbtns">
+      <button class="btn btn-g" style="font-size:.68rem" onclick="addRow()">+ Add</button>
+      <button class="btn btn-g" style="font-size:.68rem" onclick="removeRow()">&minus; Remove</button>
+    </div>
+    <div class="igrp">
+      <label>Knapsack Capacity (W)</label>
+      <input type="number" id="capIn" value="10" min="1" max="50">
+    </div>
+  </div>
+
+  <div class="psec">
+    <div class="stitle">Preset Examples</div>
+    <div class="preset-grid">
+      <button class="pbtn" onclick="loadPreset(0)">Classic<br><small style="color:var(--text2)">4 items, W=8</small></button>
+      <button class="pbtn" onclick="loadPreset(1)">Greedy Fails<br><small style="color:var(--text2)">3 items, W=4</small></button>
+      <button class="pbtn" onclick="loadPreset(2)">Worst Case<br><small style="color:var(--text2)">6 items, W=10</small></button>
+      <button class="pbtn" onclick="loadPreset(3)">Tight Fit<br><small style="color:var(--text2)">5 items, W=12</small></button>
+      <button class="pbtn" onclick="loadPreset(4)">Small<br><small style="color:var(--text2)">3 items, W=5</small></button>
+      <button class="pbtn" onclick="loadPreset(5)">Large<br><small style="color:var(--text2)">8 items, W=20</small></button>
+    </div>
+  </div>
+
+  <div class="psec">
+    <div class="stitle">Playback</div>
+    <div class="controls-row">
+      <button class="btn btn-p" onclick="buildSteps()">&#9881; Build</button>
+      <button class="btn btn-g" id="btnStep"  onclick="stepFwd()"   disabled>&#9655; Step</button>
+      <button class="btn btn-g" id="btnPlay"  onclick="playAnim()"  disabled>&#9654; Play</button>
+      <button class="btn btn-g" id="btnPause" onclick="pauseAnim()" disabled>&#9208; Pause</button>
+      <button class="btn btn-d"               onclick="resetAll()">&#8635; Reset</button>
+    </div>
+    <div class="srow">
+      <label>Speed</label>
+      <input type="range" id="speedSlider" min="0.25" max="4" step="0.25" value="1" oninput="updateSpeed()">
+      <span class="sval" id="speedVal">1.0x</span>
+    </div>
+    <div class="step-ctr">Step <span id="stepCur">0</span> / <span id="stepTot">0</span></div>
+  </div>
+
+  <div class="psec">
+    <div class="stitle">Statistics</div>
+    <div class="sgrid">
+      <div class="scard"><div class="slbl">Table Lookups</div><div class="sval2" id="stLookups">0</div></div>
+      <div class="scard"><div class="slbl">Comparisons</div><div class="sval2" id="stComps">0</div></div>
+      <div class="scard"><div class="slbl">Cells Filled</div><div class="sval2" id="stCells">0</div></div>
+      <div class="scard"><div class="slbl">Best Value</div><div class="sval2" id="stBest" style="color:var(--green)">--</div></div>
+    </div>
+  </div>
+
+  <div class="psec">
+    <div class="stitle">Step Explanation</div>
+    <div class="exbox ex-init" id="exBox">
+      <div class="exh"><span class="xtag xt-init">&#9711; IDLE</span></div>
+      <div class="exb">Load a preset or enter items, then click &#9881; Build to start.</div>
+    </div>
+  </div>
+
+</div>
+<!-- RIGHT -->
+<div class="right-panel">
+
+  <!-- TAB: Visualize -->
+  <div class="tab-content active" id="tab-viz">
+    <div class="legend">
+      <span class="ltitle">Legend</span>
+      <div class="li"><div class="ld" style="background:#1a2e40;border:2px solid var(--accent)"></div>Current</div>
+      <div class="li"><div class="ld" style="background:#1a2a3a;border:1px solid #2a4060"></div>Filled</div>
+      <div class="li"><div class="ld" style="background:#182e22;border:2px solid var(--green)"></div>Include</div>
+      <div class="li"><div class="ld" style="background:#2a2230;border:2px solid var(--purple)"></div>Traceback</div>
+      <div class="li"><div class="ld" style="background:var(--bg3);border:1px solid var(--border)"></div>Empty</div>
+    </div>
+
+    <div>
+      <div class="stitle" style="padding:0 4px;margin-bottom:8px">Items</div>
+      <div class="items-row" id="itemsVis"></div>
+    </div>
+
+    <div class="kv">
+      <div class="klbl"><span>Knapsack Capacity Used</span><span id="capLbl">0 / 0</span></div>
+      <div class="kbw"><div class="kb" id="capBar" style="width:0%"></div></div>
+      <div style="font-size:.72rem;color:var(--text2);margin-top:4px" id="selLbl">Selected: none</div>
+    </div>
+
+    <div>
+      <div class="stitle" style="padding:0 4px;margin-bottom:8px">DP Table K[i][w]</div>
+      <div class="dp-wrap"><div class="dp-cont" id="dpTable"></div></div>
+    </div>
+
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;padding:0 4px;margin-bottom:8px">
+        <div class="stitle" style="margin:0">Pseudocode</div>
+        <span id="liveLineLabel" style="display:none;font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--accent);background:rgba(79,156,249,.1);border:1px solid rgba(79,156,249,.25);border-radius:10px;padding:2px 8px;letter-spacing:.04em"></span>
+      </div>
+      <div class="pp" id="pseudoPanel"></div>
+    </div>
+
+    <div>
+      <div class="stitle" style="padding:0 4px;margin-bottom:8px">Step History <span style="font-size:.61rem;font-weight:400;color:var(--text2);letter-spacing:0;text-transform:none">(click row to jump)</span></div>
+      <div class="htw">
+        <table class="htbl">
+          <thead><tr><th style="width:4px;padding:0"></th><th>#</th><th>Item</th><th>w</th><th>K[i][w]</th><th>Decision</th></tr></thead>
+          <tbody id="histBody"></tbody>
+        </table>
+      </div>
+      <div class="hprev" id="hprev"></div>
+    </div>
+  </div>
+
+  <!-- TAB: CLO-1 -->
+  <div class="tab-content" id="tab-clo1">
+    <div class="stitle" style="font-size:.88rem;letter-spacing:0;text-transform:none;color:var(--text)">CLO-1: Complexity Analysis</div>
+    <div class="complexity-cards">
+      <div class="cc" style="--ca:var(--accent)"><div class="cl">Time (DP)</div><div class="cv">O(n&middot;W)</div><div class="cs">Pseudo-polynomial</div></div>
+      <div class="cc" style="--ca:var(--teal)"><div class="cl">Space (DP)</div><div class="cv" style="color:var(--teal)">O(n&middot;W)</div><div class="cs">Optimisable to O(W)</div></div>
+      <div class="cc" style="--ca:var(--red)"><div class="cl">Brute Force</div><div class="cv" style="color:var(--red)">O(2&#8319;)</div><div class="cs">Exponential</div></div>
+    </div>
+    <div class="chart-area">
+      <div class="stitle">Growth Curve: Operations vs Input Size</div>
+      <div class="ctrls">
+        <label>Capacity W:</label>
+        <input type="range" id="gW" min="2" max="30" value="10" oninput="drawGrowth()">
+        <span id="gWv" style="font-family:monospace;font-size:.78rem;color:var(--accent)">10</span>
+        <label style="margin-left:10px">Max n:</label>
+        <input type="range" id="gN" min="4" max="20" value="12" oninput="drawGrowth()">
+        <span id="gNv" style="font-family:monospace;font-size:.78rem;color:var(--accent)">12</span>
+      </div>
+      <svg id="gChart" width="100%" height="230" style="display:block"></svg>
+      <div style="display:flex;gap:14px;margin-top:7px;font-size:.7rem">
+        <span style="color:var(--accent)">&#8212; DP: O(n&middot;W)</span>
+        <span style="color:var(--red)">&#8212; Brute Force: O(2&#8319;)</span>
+      </div>
+    </div>
+    <div class="chart-area">
+      <div class="stitle">Live Operation Count (current animation)</div>
+      <svg id="lChart" width="100%" height="150" style="display:block"></svg>
+      <div style="font-size:.7rem;color:var(--text2);margin-top:5px">Updates as you step through. Build and play to see it grow.</div>
+    </div>
+    <div class="edu">
+      <div class="edu-hdr" onclick="tog('w1')">Why is O(2&#8319;) Brute Force so bad? <span id="w1a">&#9658;</span></div>
+      <div class="edu-body" id="w1b">
+        <p>For n=20 items, brute force checks 2<sup>20</sup> = 1,048,576 subsets. For n=30, over 1 billion. DP with W=20 needs only 20&times;20 = 400 operations.</p>
+        <p>0/1 Knapsack is "pseudo-polynomial": O(nW) is efficient when W is small, but technically exponential in the bit-length of W.</p>
+        <div class="kc">&#128161; <strong>Pseudo-polynomial:</strong> O(nW) is practical when W is bounded, but not truly polynomial in the input size (bit-length of W).</div>
+        <div class="kc">&#128161; <strong>Worst case</strong> for DP occurs when all items fit and W is large &mdash; every cell requires a full comparison. Try the "Worst Case" preset to see maximum table fill.</div>
+        <div class="kc">&#128161; <strong>Space optimisation:</strong> Space can be reduced from O(nW) to O(W) using a single 1D array filled right-to-left, since row i only depends on row i&minus;1.</div>
+        <div class="mb">&#9888; <strong>Common mistake:</strong> Assuming O(nW) is polynomial time. It is only pseudo-polynomial &mdash; if W = 2<sup>n</sup>, DP is no better than brute force.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: CLO-2 -->
+  <div class="tab-content" id="tab-clo2">
+    <div class="stitle" style="font-size:.88rem;letter-spacing:0;text-transform:none;color:var(--text)">CLO-2: Sorting &amp; Searching</div>
+    <div class="edu">
+      <div class="edu-hdr" onclick="tog('s1')" style="background:var(--bg3)">Role of Sorting: Value/Weight Ratio Pre-Sort <span id="s1a">&#9658;</span></div>
+      <div class="edu-body" id="s1b">
+        <p>Sorting items by v/w ratio descending is the Greedy approach for Fractional Knapsack. For 0/1 Knapsack, DP does not need this sort, but understanding it shows why greedy fails.</p>
+        <p>In the traceback phase, the algorithm performs a <strong>linear search</strong> (O(n)) through the DP table rows to find which items were selected &mdash; starting at K[n][W] and walking upward.</p>
+        <div class="kc">&#128161; <strong>Sorting role:</strong> v/w ratio sort = greedy heuristic order. DP fills the table correctly regardless of item order.</div>
+        <div class="kc">&#128161; <strong>Traceback search:</strong> After filling the table, compare K[i][w] vs K[i&minus;1][w] for each row. If they differ, item i was included. This is O(n) sequential search.</div>
+        <div class="kc">&#128161; <strong>Fractional vs 0/1:</strong> Greedy (sort by v/w then take fractions) solves Fractional Knapsack optimally in O(n log n). For 0/1 Knapsack, greedy is a heuristic that can fail &mdash; see the counterexample below.</div>
+        <div class="mb">&#9888; <strong>Common mistake:</strong> Applying greedy sort to 0/1 Knapsack and expecting an optimal result. The inability to take fractions breaks greedy optimality.</div>
+        <div class="mb">&#9888; <strong>Common mistake:</strong> Skipping traceback and only reporting K[n][W]. The value is correct but you cannot determine which items to pack without the O(n) traceback search.</div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:15px">
+      <div class="stitle">Items Sorted by Value/Weight Ratio</div>
+      <div id="sortDisp"></div>
+      <button class="btn btn-p" style="margin-top:11px" onclick="animSort()">&#9654; Animate Sort</button>
+      <div id="sortMsg" style="margin-top:9px;font-size:.78rem;color:var(--text2)"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:15px">
+      <div class="stitle">Traceback: Searching for Selected Items</div>
+      <div style="font-size:.78rem;color:var(--text2);margin-bottom:9px">After filling the DP table, we trace back from K[n][W] to find which items were included.</div>
+      <svg id="tbSVG" width="100%" height="110"></svg>
+      <div id="tbMsg" style="margin-top:7px;font-size:.78rem;color:var(--text2)"></div>
+    </div>
+    <div class="chart-area">
+      <div class="stitle">Impact: With vs Without Traceback</div>
+      <div style="font-size:.78rem;color:var(--text2);margin-bottom:10px">Without traceback, we find the maximum value but cannot identify which items to pack.</div>
+      <div class="compare-grid">
+        <div class="ccard win">
+          <h4 style="color:var(--green)">&#10003; With Traceback</h4>
+          <div class="ci"><span>Max Value</span><span id="tbMaxV">--</span></div>
+          <div class="ci"><span>Items Selected</span><span id="tbItems">--</span></div>
+          <div class="ci"><span>Total Weight</span><span id="tbWt">--</span></div>
+        </div>
+        <div class="ccard los">
+          <h4 style="color:var(--red)">&#10007; Without Traceback</h4>
+          <div class="ci"><span>Max Value</span><span id="ntbMaxV">--</span></div>
+          <div class="ci"><span>Items Selected</span><span style="color:var(--red)">Unknown!</span></div>
+          <div class="ci"><span>Total Weight</span><span style="color:var(--red)">Unknown!</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: CLO-3 -->
+  <div class="tab-content" id="tab-clo3">
+    <div class="stitle" style="font-size:.88rem;letter-spacing:0;text-transform:none;color:var(--text)">CLO-3: Design Paradigm - Dynamic Programming</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="background:var(--bg3);border:1px solid var(--accent);border-radius:var(--r);padding:10px 15px;font-size:.8rem"><strong style="color:var(--accent)">Paradigm:</strong> Dynamic Programming</div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 15px;font-size:.8rem"><strong style="color:var(--yellow)">Recurrence:</strong> K[i][w] = max(K[i-1][w], v&#7522; + K[i-1][w-w&#7522;])</div>
+    </div>
+    <div class="edu">
+      <div class="edu-hdr" onclick="tog('d1')">How DP Works: Overlapping Subproblems &amp; Optimal Substructure <span id="d1a">&#9658;</span></div>
+      <div class="edu-body" id="d1b">
+        <p><strong>Optimal Substructure:</strong> The optimal solution to K[i][w] depends on optimal solutions to K[i&minus;1][w] (exclude) and K[i&minus;1][w&minus;w&#7522;] (include). You can build the global optimum from smaller optimal subproblems.</p>
+        <p><strong>Overlapping Subproblems:</strong> Many cells K[i][w] are reused across different decision branches. DP stores results in a table (memoization) instead of recomputing them &mdash; this is what makes it efficient.</p>
+        <div class="kc">&#128161; <strong>DP = Recursion + Memoization.</strong> Fill small subproblems first (row 0, then row 1&hellip;), building bottom-up to the full answer K[n][W].</div>
+        <div class="kc">&#128161; <strong>Why not Divide &amp; Conquer?</strong> D&amp;C subproblems are independent (e.g. merge sort splits into non-overlapping halves). Knapsack subproblems overlap &mdash; that overlap is exactly what DP exploits.</div>
+        <div class="kc">&#128161; <strong>Why not Greedy?</strong> Greedy makes a locally optimal choice (highest v/w) at each step without reconsidering. Knapsack requires global optimisation across all combinations &mdash; greedy cannot guarantee this (see counterexample below).</div>
+        <div class="kc">&#128161; <strong>Bottom-up vs Top-down:</strong> This visualiser uses bottom-up DP (fill the table iteratively). Top-down DP uses recursion with a memoisation cache &mdash; same result, different execution order.</div>
+        <div class="mb">&#9888; <strong>Common mistake:</strong> Confusing DP with Divide &amp; Conquer. D&amp;C splits into independent subproblems; DP is for <em>overlapping</em> subproblems.</div>
+        <div class="mb">&#9888; <strong>Common mistake:</strong> Thinking the recurrence K[i][w] = max(include, exclude) only works for 2 choices. It generalises: Unbounded Knapsack changes K[i-1] to K[i] in the include branch, allowing reuse of the same item.</div>
+      </div>
+    </div>
+    <div class="chart-area">
+      <div class="stitle">Greedy Counterexample: When Greedy Fails</div>
+      <div style="font-size:.78rem;color:var(--text2);margin-bottom:11px">Greedy picks highest v/w first but may leave capacity wasted. DP always finds true optimum.</div>
+      <div id="greedyEx"></div>
+    </div>
+    <div class="chart-area">
+      <div class="stitle">Brute Force Decision Tree vs DP Table</div>
+      <div style="font-size:.78rem;color:var(--text2);margin-bottom:9px">Brute force explores all 2&#8319; paths. DP collapses repeated subproblems into table cells.</div>
+      <svg id="dtSVG" width="100%" height="215"></svg>
+    </div>
+    <div class="chart-area">
+      <div class="stitle">Recurrence Walkthrough (Click any DP cell)</div>
+      <div style="font-size:.78rem;color:var(--text2);margin-bottom:8px">Click any filled cell in the DP table to see how it was computed.</div>
+      <div id="recDisp" style="background:var(--bg3);border-radius:var(--r);padding:13px;font-family:monospace;font-size:.8rem;min-height:46px;line-height:1.8"><span style="color:var(--text2)">Click a cell after building steps...</span></div>
+    </div>
+  </div>
+
+  <!-- TAB: Learn -->
+  <div class="tab-content" id="tab-learn">
+    <div class="stitle" style="font-size:.88rem;letter-spacing:0;text-transform:none;color:var(--text)">Algorithm Overview</div>
+    <div class="edu">
+      <div class="edu-hdr" onclick="tog('l1')">What is the 0/1 Knapsack Problem? <span id="l1a">&#9658;</span></div>
+      <div class="edu-body" id="l1b">
+        <p>Given n items each with weight w&#7522; and value v&#7522;, and a knapsack of capacity W: find the subset maximising total value without exceeding W. Each item is taken (1) or not (0).</p>
+        <h4>When to use it</h4>
+        <p>Resource allocation: project budgeting, cargo loading, portfolio optimisation, bin packing.</p>
+        <h4>How it works</h4>
+        <p>Build a 2D table K[i][w] = best value using items 1..i with capacity w. Fill row by row. Answer is K[n][W].</p>
+        <div class="kc">K[i][w] = max(K[i-1][w], v&#7522; + K[i-1][w-w&#7522;]) if w&#7522; &le; w, else K[i-1][w]</div>
+      </div>
+    </div>
+    <div class="edu">
+      <div class="edu-hdr" onclick="tog('l2')">Worked Example - Step by Step <span id="l2a">&#9658;</span></div>
+      <div class="edu-body" id="l2b">
+        <p><strong>Items:</strong> i1(w=2,v=6), i2(w=2,v=10), i3(w=3,v=12) | <strong>W=5</strong></p>
+        <h4>Fill Table:</h4>
+        <p><strong>i=1:</strong> K[1][2..5]=6 (include i1, w=2)</p>
+        <p><strong>i=2:</strong> K[2][2]=max(6,10)=10, K[2][4]=max(6,16)=16</p>
+        <p><strong>i=3:</strong> K[3][5]=max(K[2][5], 12+K[2][2])=max(16,22)=22</p>
+        <h4>Traceback from K[3][5]=22:</h4>
+        <p>K[3][5]&#8800;K[2][5] &rarr; i3 included, go to K[2][2].<br>K[2][2]&#8800;K[1][2] &rarr; i2 included. Done.</p>
+        <p><strong>Answer: {i2, i3}, value=22, weight=5</strong></p>
+        <div class="kc">Load the "Small" preset to see this example animated!</div>
+      </div>
+    </div>
+    <div class="edu">
+      <div class="edu-hdr" onclick="tog('l3')">Key Concepts &amp; Common Mistakes <span id="l3a">&#9658;</span></div>
+      <div class="edu-body" id="l3b">
+        <div class="kc"><strong>0/1 constraint:</strong> Cannot take a fraction. Full weight and value or nothing.</div>
+        <div class="kc"><strong>Row independence:</strong> Row i depends only on row i-1. Can optimise space to O(W) with 1D array.</div>
+        <div class="mb">&#9888; Using greedy (highest v/w) for 0/1 Knapsack fails. Greedy works for Fractional Knapsack only.</div>
+        <div class="mb">&#9888; Forgetting traceback: K[n][W] gives the value but you need traceback to find which items.</div>
+        <div class="mb">&#9888; Off-by-one: Row 0 and column 0 must be all zeros (base case).</div>
+      </div>
+    </div>
+    <div class="edu">
+      <div class="edu-hdr" onclick="tog('l4')">Variants &amp; Extensions <span id="l4a">&#9658;</span></div>
+      <div class="edu-body" id="l4b">
+        <p><strong>Unbounded Knapsack:</strong> Each item can be taken multiple times. Change to K[i][w] = max(K[i-1][w], v&#7522; + K[i][w-w&#7522;]).</p>
+        <p><strong>Fractional Knapsack:</strong> Can take fractions. Solved greedily in O(n log n).</p>
+        <p><strong>Space Optimisation:</strong> Use 1D array of size W+1, update right-to-left: O(W) space.</p>
+        <div class="kc">Subset sum is a special case of 0/1 Knapsack where v&#7522; = w&#7522;.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// =====================================================
+// PRESETS
+// =====================================================
+var PRESETS = [
+  { name:'Classic',      items:[{w:2,v:3},{w:3,v:4},{w:4,v:5},{w:5,v:6}], W:8  },
+  { name:'Greedy Fails', items:[{w:1,v:1},{w:2,v:6},{w:3,v:10}],           W:4  },
+  { name:'Worst Case',   items:[{w:1,v:1},{w:2,v:6},{w:3,v:10},{w:5,v:16},{w:7,v:22},{w:9,v:29}], W:10 },
+  { name:'Tight Fit',    items:[{w:2,v:6},{w:2,v:10},{w:3,v:12},{w:4,v:14},{w:5,v:20}], W:12 },
+  { name:'Small',        items:[{w:2,v:6},{w:2,v:10},{w:3,v:12}],          W:5  },
+  { name:'Large',        items:[{w:1,v:2},{w:2,v:5},{w:3,v:8},{w:4,v:10},{w:5,v:13},{w:6,v:15},{w:7,v:18},{w:8,v:22}], W:20 }
+];
+
+// =====================================================
+// STATE
+// =====================================================
+var S = {
+  items:[], W:10, dp:[],
+  steps:[], cur:-1,
+  playing:false, speed:1, timer:null,
+  history:[]
+};
+
+// =====================================================
+// PSEUDOCODE DATA
+// =====================================================
+var PSEUDO = [
+  { code:'<span class="kw">function</span> <span class="fn">knapsack</span>(<span class="va">items</span>, <span class="va">W</span>):',
+    tip:'ENTRY POINT - Receives the item list and W (max capacity). Each item has a weight and value.' },
+  { code:'  <span class="va">n</span> <span class="op">&larr;</span> <span class="va">items</span>.length',
+    tip:'COUNT - Store number of items in n. The table will have n+1 rows (row 0 is the base case).' },
+  { code:'  <span class="va">K</span>[0..<span class="va">n</span>][0..<span class="va">W</span>] <span class="op">&larr;</span> 0  <span class="cm">// base case</span>',
+    tip:'INITIALIZE - Create (n+1)x(W+1) table filled with zeros. Row 0 = no items. Column 0 = zero capacity.' },
+  { code:'  <span class="kw">for</span> <span class="va">i</span> <span class="kw">from</span> <span class="nu">1</span> <span class="kw">to</span> <span class="va">n</span>:',
+    tip:'OUTER LOOP - Process each item one by one. Each pass fills one full row of the table.' },
+  { code:'    <span class="kw">for</span> <span class="va">w</span> <span class="kw">from</span> <span class="nu">0</span> <span class="kw">to</span> <span class="va">W</span>:',
+    tip:'INNER LOOP - For each item, try every possible capacity from 0 to W. Total: O(n*W) iterations.' },
+  { code:'      <span class="kw">if</span> <span class="va">items</span>[<span class="va">i</span>].weight &gt; <span class="va">w</span>:',
+    tip:'WEIGHT CHECK - If item weight exceeds current capacity w, it cannot fit. Must exclude.' },
+  { code:'        <span class="va">K</span>[<span class="va">i</span>][<span class="va">w</span>] <span class="op">&larr;</span> <span class="va">K</span>[<span class="va">i</span>-1][<span class="va">w</span>]  <span class="cm">// forced exclude</span>',
+    tip:'FORCED EXCLUDE - Item is too heavy. Copy value from row above: best result without this item.' },
+  { code:'      <span class="kw">else</span>:',
+    tip:'ITEM FITS - Weight is within capacity. Now compare including vs excluding.' },
+  { code:'        <span class="va">inc</span> <span class="op">&larr;</span> <span class="va">items</span>[<span class="va">i</span>].value + <span class="va">K</span>[<span class="va">i</span>-1][<span class="va">w</span>-<span class="va">items</span>[<span class="va">i</span>].weight]',
+    tip:'INCLUDE VALUE - Gain item value, but use its weight from capacity. Remaining capacity uses best of previous items.' },
+  { code:'        <span class="va">exc</span> <span class="op">&larr;</span> <span class="va">K</span>[<span class="va">i</span>-1][<span class="va">w</span>]',
+    tip:'EXCLUDE VALUE - Skip this item. Best value is whatever was achievable without it: K[i-1][w].' },
+  { code:'        <span class="va">K</span>[<span class="va">i</span>][<span class="va">w</span>] <span class="op">&larr;</span> <span class="fn">max</span>(<span class="va">inc</span>, <span class="va">exc</span>)  <span class="cm">// core recurrence</span>',
+    tip:'CORE RECURRENCE - The heart of DP. Always take the better of include vs exclude. Builds global optimum bottom-up.' },
+  { code:'  <span class="kw">return</span> <span class="va">K</span>[<span class="va">n</span>][<span class="va">W</span>]  <span class="cm">// maximum value</span>',
+    tip:'RESULT - Bottom-right cell holds the best value using all n items with full capacity W.' },
+  { code:'', tip:'' },
+  { code:'<span class="kw">function</span> <span class="fn">traceback</span>(<span class="va">K</span>, <span class="va">items</span>, <span class="va">W</span>):',
+    tip:'TRACEBACK - Walk backwards through the table to find which items were selected. O(n) time.' },
+  { code:'  <span class="va">selected</span> <span class="op">&larr;</span> []',
+    tip:'Initialize empty list to collect selected item indices.' },
+  { code:'  <span class="va">w</span> <span class="op">&larr;</span> <span class="va">W</span>',
+    tip:'START - Begin at full capacity W. Subtract item weights as they are found.' },
+  { code:'  <span class="kw">for</span> <span class="va">i</span> <span class="kw">from</span> <span class="va">n</span> <span class="kw">down to</span> <span class="nu">1</span>:',
+    tip:'Walk backwards from last item to first, checking each row.' },
+  { code:'    <span class="kw">if</span> <span class="va">K</span>[<span class="va">i</span>][<span class="va">w</span>] != <span class="va">K</span>[<span class="va">i</span>-1][<span class="va">w</span>]:',
+    tip:'KEY DECISION - If value changed vs row above, item i was included. If equal, item was skipped.' },
+  { code:'      <span class="va">selected</span>.add(<span class="va">i</span>)',
+    tip:'Item i is in the optimal solution. Add to selected list.' },
+  { code:'      <span class="va">w</span> <span class="op">&larr;</span> <span class="va">w</span> - <span class="va">items</span>[<span class="va">i</span>].weight',
+    tip:'Subtract item weight to find remaining capacity for items above.' },
+  { code:'  <span class="kw">return</span> <span class="va">selected</span>',
+    tip:'DONE - Return selected item indices. Together they achieve K[n][W] without exceeding capacity W.' }
+];
+
+var PSEC = { 0:{label:'FILL TABLE',color:'var(--accent)'}, 13:{label:'TRACEBACK',color:'var(--purple)'} };
+
+// =====================================================
+// INIT
+// =====================================================
+function init() {
+  loadPreset(0);
+  buildPseudo();
+  buildGreedy();
+  drawTree();
+  drawGrowth();
+  drawLive([]);
+}
+
+// =====================================================
+// PSEUDOCODE
+// =====================================================
+function buildPseudo() {
+  var panel = document.getElementById('pseudoPanel');
+  var html = '';
+  for (var i = 0; i < PSEUDO.length; i++) {
+    var p = PSEUDO[i];
+    if (PSEC[i]) {
+      html += '<div class="psec-hdr" style="border-color:' + PSEC[i].color + ';color:' + PSEC[i].color + '">' + PSEC[i].label + '</div>';
+    }
+    var blank = !p.code;
+    html += '<div class="pline' + (blank ? ' pblank' : '') + '" id="pl' + i + '" data-idx="' + i + '" data-tip="' + esc(p.tip) + '">';
+    html += '<span class="pln">' + (blank ? '' : pad(i + 1)) + '</span>';
+    html += '<span class="pcode">' + (p.code || '') + '</span>';
+    if (p.tip) html += '<span class="tip-icon">?</span>';
+    html += '</div>';
+  }
+  panel.innerHTML = html;
+
+  var ttp = document.getElementById('ttp');
+  var lines = panel.querySelectorAll('.pline');
+  for (var j = 0; j < lines.length; j++) {
+    (function(line) {
+      var tip = line.dataset.tip;
+      if (!tip) return;
+      line.addEventListener('mouseenter', function(e) {
+        var dash = tip.indexOf(' - ');
+        var title = dash > -1 ? tip.slice(0, dash) : 'THIS LINE';
+        var body  = dash > -1 ? tip.slice(dash + 3) : tip;
+        document.getElementById('tt-title').textContent = title;
+        document.getElementById('tt-body').textContent  = body;
+        ttp.style.display = 'block';
+        positionTip(e, ttp);
+      });
+      line.addEventListener('mousemove', function(e) { positionTip(e, ttp); });
+      line.addEventListener('mouseleave', function() { ttp.style.display = 'none'; });
+    })(lines[j]);
+  }
+}
+
+function esc(s) { return (s || '').replace(/"/g, '&quot;'); }
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+function positionTip(e, el) {
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var x = e.clientX + 16, y = e.clientY - 10;
+  el.style.left = '-9999px'; el.style.top = '-9999px'; el.style.display = 'block';
+  var w = el.offsetWidth, h = el.offsetHeight;
+  if (x + w > vw - 12) x = e.clientX - w - 12;
+  if (y + h > vh - 12) y = vh - h - 12;
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+}
+
+function hlPseudo(idx) {
+  var panel = document.getElementById('pseudoPanel');
+  var lines = panel.querySelectorAll('.pline');
+  for (var i = 0; i < lines.length; i++) lines[i].classList.toggle('active', i === idx);
+  if (idx >= 0) {
+    var el = document.getElementById('pl' + idx);
+    if (el && panel) {
+      var pr = panel.getBoundingClientRect(), lr = el.getBoundingClientRect();
+      panel.scrollBy({ top: lr.top - pr.top - pr.height / 2 + lr.height / 2, behavior: 'smooth' });
+    }
+  }
+  var lbl = document.getElementById('liveLineLabel');
+  if (lbl) {
+    if (idx >= 0 && PSEUDO[idx] && PSEUDO[idx].tip) {
+      var tip = PSEUDO[idx].tip;
+      var dash = tip.indexOf(' - ');
+      lbl.textContent = '&#9654; ' + (dash > -1 ? tip.slice(0, dash) : 'Line ' + (idx + 1));
+      lbl.style.display = 'inline';
+    } else {
+      lbl.style.display = 'none';
+    }
+  }
+}
+
+// =====================================================
+// INPUT
+// =====================================================
+function renderRows(items) {
+  var tbody = document.getElementById('itemRows');
+  var html = '';
+  for (var i = 0; i < items.length; i++) {
+    html += '<tr><td><span class="ilbl">i' + (i+1) + '</span></td>';
+    html += '<td><input type="number" class="iw" value="' + items[i].w + '" min="1" max="30" onchange="syncItems()"></td>';
+    html += '<td><input type="number" class="iv" value="' + items[i].v + '" min="1" max="100" onchange="syncItems()"></td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function syncItems() {
+  var tbody = document.getElementById('itemRows');
+  var ws = tbody.querySelectorAll('.iw');
+  var vs = tbody.querySelectorAll('.iv');
+  S.items = [];
+  for (var i = 0; i < ws.length; i++) {
+    S.items.push({ w: parseInt(ws[i].value) || 1, v: parseInt(vs[i].value) || 1 });
+  }
+}
+
+function addRow() {
+  syncItems();
+  if (S.items.length < 12) { S.items.push({w:1,v:1}); renderRows(S.items); }
+}
+
+function removeRow() {
+  syncItems();
+  if (S.items.length > 1) { S.items.pop(); renderRows(S.items); }
+}
+
+function loadPreset(idx) {
+  var p = PRESETS[idx];
+  S.items = p.items.map(function(x) { return {w:x.w, v:x.v}; });
+  S.W = p.W;
+  document.getElementById('capIn').value = p.W;
+  renderRows(S.items);
+  resetAll(false);
+  renderItems([]);
+  updateSortDisp();
+  document.querySelectorAll('.pbtn').forEach(function(b, i) {
+    b.style.borderColor = i === idx ? 'var(--accent)' : '';
+    b.style.color       = i === idx ? 'var(--accent)' : '';
+  });
+  setEx('Loaded "' + p.name + '": ' + p.items.length + ' items, W=' + p.W + '. Click Build to start.', 'init');
+}
+
+// =====================================================
+// ALGORITHM
+// =====================================================
+function buildSteps() {
+  syncItems();
+  S.W = parseInt(document.getElementById('capIn').value) || 10;
+  var items = S.items, n = items.length, W = S.W;
+  var dp = [];
+  for (var i = 0; i <= n; i++) { dp.push([]); for (var w = 0; w <= W; w++) dp[i].push(0); }
+  S.dp = dp;
+
+  var steps = [], st = {lookups:0, comparisons:0, cells:0};
+
+  steps.push({ type:'init', dp:cpDp(dp), pl:2, i:-1, w:-1,
+    ex:'Building a ' + (n+1) + 'x' + (W+1) + ' DP table. All cells start at 0. Row 0 = no items.',
+    action:'Initialize', stats:cpSt(st) });
+
+  for (var i = 1; i <= n; i++) {
+    for (var w = 0; w <= W; w++) {
+      var wi = items[i-1].w, vi = items[i-1].v;
+      st.lookups++;
+      if (wi > w) {
+        st.comparisons++;
+        dp[i][w] = dp[i-1][w];
+        st.cells++;
+        steps.push({ type:'fill', dp:cpDp(dp), pl:6, i:i, w:w, included:false,
+          action:'Exclude (heavy)',
+          ex:'Item ' + i + ' (w=' + wi + ', v=' + vi + '): weight ' + wi + ' > capacity ' + w + '. Cannot fit. K[' + i + '][' + w + '] = K[' + (i-1) + '][' + w + '] = ' + dp[i][w] + '.',
+          stats:cpSt(st) });
+      } else {
+        st.comparisons++;
+        var inc = vi + dp[i-1][w-wi];
+        var exc = dp[i-1][w];
+        st.lookups += 2;
+        steps.push({ type:'compare', dp:cpDp(dp), pl:8, i:i, w:w, included:null,
+          action:'Evaluating',
+          ex:'Item ' + i + ' (w=' + wi + ', v=' + vi + ') fits in capacity ' + w + '. Include=' + vi + '+K[' + (i-1) + '][' + (w-wi) + ']=' + vi + '+' + dp[i-1][w-wi] + '=' + inc + '  |  Exclude=K[' + (i-1) + '][' + w + ']=' + exc + '.',
+          stats:cpSt(st) });
+        dp[i][w] = Math.max(inc, exc);
+        st.cells++;
+        var tookInc = dp[i][w] === inc;
+        steps.push({ type:'fill', dp:cpDp(dp), pl:10, i:i, w:w, included:tookInc,
+          action: tookInc ? 'Include item' : 'Exclude item',
+          ex: tookInc
+            ? 'Include wins! max(' + inc + ', ' + exc + ') = ' + dp[i][w] + '. Item ' + i + ' added. K[' + i + '][' + w + '] = ' + dp[i][w] + '.'
+            : 'Exclude wins. max(' + inc + ', ' + exc + ') = ' + dp[i][w] + '. Skip item ' + i + '. K[' + i + '][' + w + '] = ' + dp[i][w] + '.',
+          stats:cpSt(st) });
+      }
+    }
+  }
+
+  steps.push({ type:'tb-start', dp:cpDp(dp), pl:13, i:n, w:W, action:'Start traceback',
+    ex:'DP complete! Max value = K[' + n + '][' + W + '] = ' + dp[n][W] + '. Tracing back to find selected items.',
+    stats:cpSt(st) });
+
+  var tw = W, sel = [];
+  for (var i = n; i >= 1; i--) {
+    if (dp[i][tw] !== dp[i-1][tw]) {
+      sel.unshift(i);
+      var nw = tw - items[i-1].w;
+      steps.push({ type:'tb-inc', dp:cpDp(dp), pl:17, i:i, w:tw, action:'Include i' + i,
+        ex:'K[' + i + '][' + tw + ']=' + dp[i][tw] + ' != K[' + (i-1) + '][' + tw + ']=' + dp[i-1][tw] + '. Item ' + i + ' (w=' + items[i-1].w + ', v=' + items[i-1].v + ') was included. Move to K[' + (i-1) + '][' + nw + '].',
+        selected:sel.slice(), stats:cpSt(st) });
+      tw = nw;
+    } else {
+      steps.push({ type:'tb-skip', dp:cpDp(dp), pl:16, i:i, w:tw, action:'Skip i' + i,
+        ex:'K[' + i + '][' + tw + ']=' + dp[i][tw] + ' = K[' + (i-1) + '][' + tw + ']. Item ' + i + ' was NOT included. Move up to row ' + (i-1) + '.',
+        selected:sel.slice(), stats:cpSt(st) });
+    }
+  }
+
+  var totV = sel.reduce(function(a, idx) { return a + items[idx-1].v; }, 0);
+  var totW = sel.reduce(function(a, idx) { return a + items[idx-1].w; }, 0);
+  steps.push({ type:'done', dp:cpDp(dp), pl:20, i:-1, w:-1, action:'Done',
+    ex:'Optimal solution: Items {' + sel.join(', ') + '} - value=' + totV + ', weight=' + totW + '/' + W + ' (' + Math.round(totW/W*100) + '% full).',
+    selected:sel.slice(), stats:cpSt(st) });
+
+  S.steps = steps; S.cur = -1; S.history = [];
+  renderDp(null, -1, -1, []);
+  renderItems([]);
+  document.getElementById('histBody').innerHTML = '';
+  document.getElementById('stepTot').textContent = steps.length;
+  document.getElementById('stepCur').textContent = 0;
+  document.getElementById('btnStep').disabled  = false;
+  document.getElementById('btnPlay').disabled  = false;
+  document.getElementById('btnPause').disabled = false;
+  setStatus('ready');
+  setEx('Built ' + steps.length + ' steps for ' + n + ' items, W=' + W + '. Click Step or Play.', 'init');
+  updStats({lookups:0,comparisons:0,cells:0});
+  drawLive([]);
+}
+
+function cpDp(dp) { return dp.map(function(r) { return r.slice(); }); }
+function cpSt(s)  { return {lookups:s.lookups, comparisons:s.comparisons, cells:s.cells}; }
+
+// =====================================================
+// PLAYBACK
+// =====================================================
+function stepFwd(jmp) {
+  var idx = jmp !== undefined ? jmp : S.cur + 1;
+  if (idx >= S.steps.length) { donAnim(); return; }
+  S.cur = idx;
+  applyStep(S.steps[idx]);
+  document.getElementById('stepCur').textContent = idx + 1;
+}
+
+function applyStep(step) {
+  var n = S.items.length, W = S.W;
+  var cs = [];
+  for (var i = 0; i <= n; i++) {
+    cs.push([]);
+    for (var w = 0; w <= W; w++) {
+      if (i === 0 || w === 0) { cs[i].push('hdr'); continue; }
+      cs[i].push(step.dp[i][w] > 0 ? 'fil' : '');
+    }
+  }
+  var ci = step.i, cw = step.w;
+  if (ci > 0 && cw >= 0) cs[ci][cw] = 'cur';
+  if (step.type === 'tb-inc' || step.type === 'tb-skip') cs[ci][cw] = 'trc';
+  if (step.type === 'done') {
+    var sel = step.selected || [];
+    for (var si = 0; si < sel.length; si++) {
+      for (var ww = 0; ww <= W; ww++) if (step.dp[sel[si]][ww] > 0) cs[sel[si]][ww] = 'inc';
+    }
+  }
+
+  renderDp(step.dp, ci, cw, cs);
+
+  var ai = -1;
+  if (step.type === 'tb-inc' || step.type === 'tb-skip') ai = ci;
+  else if ((step.type === 'fill' || step.type === 'compare') && ci > 0 && step.included !== true) ai = ci;
+  renderItems(step.selected || [], ai);
+  updKbar(step.selected || []);
+  hlPseudo(step.pl);
+
+  var etype = 'cmp';
+  if (step.type === 'init')                               etype = 'init';
+  else if (step.type === 'fill' && step.included === true)  etype = 'inc';
+  else if (step.type === 'fill' && step.included === false) etype = 'exc';
+  else if (step.type === 'compare')                        etype = 'cmp';
+  else if (step.type === 'tb-inc' || step.type === 'tb-skip' || step.type === 'tb-start') etype = 'tb';
+  else if (step.type === 'done')                           etype = 'done';
+  setEx(step.ex, etype);
+  updStats(step.stats);
+  addHist(step);
+  if (step.type === 'done') { updTbDisp(step); donAnim(); }
+}
+
+function playAnim() {
+  if (S.cur >= S.steps.length - 1) return;
+  S.playing = true; setStatus('playing'); sched();
+}
+function sched() {
+  if (!S.playing) return;
+  S.timer = setTimeout(function() {
+    stepFwd();
+    if (S.cur < S.steps.length - 1) sched(); else S.playing = false;
+  }, 900 / S.speed);
+}
+function pauseAnim() { S.playing = false; clearTimeout(S.timer); setStatus('paused'); }
+function donAnim()   { S.playing = false; clearTimeout(S.timer); setStatus('done'); }
+
+function resetAll(rebuild) {
+  pauseAnim();
+  S.steps = []; S.cur = -1; S.history = [];
+  document.getElementById('stepCur').textContent = 0;
+  document.getElementById('stepTot').textContent = 0;
+  document.getElementById('btnStep').disabled  = true;
+  document.getElementById('btnPlay').disabled  = true;
+  document.getElementById('btnPause').disabled = true;
+  setStatus('idle');
+  setEx('Load a preset or enter items, then click Build to start.', 'init');
+  updStats({lookups:0,comparisons:0,cells:0});
+  hlPseudo(-1);
+  if (rebuild !== false) {
+    renderDp(null,-1,-1,[]); renderItems([]);
+    document.getElementById('histBody').innerHTML = '';
+    updKbar([]);
+  }
+  drawLive([]);
+}
+
+function updateSpeed() {
+  S.speed = parseFloat(document.getElementById('speedSlider').value);
+  document.getElementById('speedVal').textContent = S.speed.toFixed(2) + 'x';
+}
+
+// =====================================================
+// RENDER: DP TABLE
+// =====================================================
+function renderDp(dp, ci, cw, cs) {
+  var n = S.items.length, W = S.W;
+  var cont = document.getElementById('dpTable');
+  if (!dp) {
+    cont.innerHTML = '<div style="color:var(--text2);padding:28px 18px;font-size:.78rem;text-align:center;line-height:2">'
+      + '<div style="font-size:1.6rem;opacity:.3;margin-bottom:7px">&#10753;</div>'
+      + '<div>Click <strong style="color:var(--accent)">Build</strong> to generate the DP table.</div></div>';
+    return;
+  }
+  var html = '<div class="dp-row">';
+  html += '<div class="dp-cell hdr" style="font-size:.55rem;line-height:1.2">i/w</div>';
+  for (var w = 0; w <= W; w++) html += '<div class="dp-cell hdr">' + w + '</div>';
+  html += '</div>';
+  for (var i = 0; i <= n; i++) {
+    var ractive = ci > 0 && i === ci;
+    html += '<div class="dp-row' + (ractive ? ' proc' : '') + '">';
+    var it = i > 0 ? S.items[i-1] : null;
+    var ttl = it ? 'title="Item ' + i + ': w=' + it.w + ', v=' + it.v + '"' : '';
+    html += '<div class="dp-cell hdr" style="font-size:.63rem" ' + ttl + '>' + (i === 0 ? '&#8709;' : 'i' + i) + '</div>';
+    for (var w = 0; w <= W; w++) {
+      var cls = (cs && cs[i]) ? cs[i][w] : '';
+      if (i === 0 || w === 0) cls = 'hdr';
+      var val = dp[i][w];
+      html += '<div class="dp-cell ' + cls + '" onclick="cellClick(' + i + ',' + w + ')" title="K[' + i + '][' + w + ']=' + val + '">'
+        + (val !== undefined && val !== null ? val : '') + '</div>';
+    }
+    html += '</div>';
+  }
+  cont.innerHTML = html;
+}
+
+function cellClick(i, w) {
+  if (i === 0 || w === 0 || !S.dp || !S.dp[i]) return;
+  var dp = S.dp, it = S.items[i-1];
+  if (!it) return;
+  var wi = it.w, vi = it.v, html;
+  if (wi > w) {
+    html = '<span style="color:var(--yellow)">K[' + i + '][' + w + ']</span> = K[' + (i-1) + '][' + w + '] = <span style="color:var(--accent)">' + dp[i][w] + '</span><br>'
+      + '<span style="color:var(--text2)">Item ' + i + ' (w=' + wi + ') too heavy for capacity ' + w + '. Forced exclude.</span>';
+  } else {
+    var inc = vi + dp[i-1][w-wi], exc = dp[i-1][w];
+    html = '<span style="color:var(--yellow)">K[' + i + '][' + w + ']</span> = max(<span style="color:var(--green)">' + inc + '</span>, <span style="color:var(--red)">' + exc + '</span>) = <span style="color:var(--accent)">' + dp[i][w] + '</span><br>'
+      + '<span style="color:var(--green)">Include: ' + vi + '+K[' + (i-1) + '][' + (w-wi) + ']=' + vi + '+' + dp[i-1][w-wi] + '=' + inc + '</span><br>'
+      + '<span style="color:var(--red)">Exclude: K[' + (i-1) + '][' + w + ']=' + exc + '</span>';
+  }
+  document.getElementById('recDisp').innerHTML = html;
+  switchTab('clo3');
+}
+
+// =====================================================
+// RENDER: ITEMS
+// =====================================================
+function renderItems(selected, activeI) {
+  var cont = document.getElementById('itemsVis');
+  if (!S.items.length) { cont.innerHTML = '<div style="color:var(--text2);font-size:.76rem;padding:8px">No items loaded.</div>'; return; }
+  var selSet = {};
+  for (var k = 0; k < (selected || []).length; k++) selSet[selected[k]] = true;
+  var html = '';
+  for (var i = 0; i < S.items.length; i++) {
+    var idx = i + 1, item = S.items[i];
+    var isSel = !!selSet[idx], isAct = activeI === idx;
+    var cls = 'ibox' + (isSel ? ' sel' : isAct ? ' act' : '');
+    var ratio = item.w > 0 ? (item.v / item.w).toFixed(2) : '?';
+    var stIcon = isSel ? '<div class="ist" style="color:var(--green)">&#10003; IN BAG</div>'
+               : isAct ? '<div class="ist" style="color:var(--accent)">&#9654; NOW</div>' : '';
+    html += '<div class="' + cls + '">'
+      + '<div class="in">Item ' + idx + '</div>'
+      + '<div class="iv">v=' + item.v + '</div>'
+      + '<div class="iw">w=' + item.w + '</div>'
+      + '<div class="ir">v/w=' + ratio + '</div>'
+      + stIcon + '</div>';
+  }
+  cont.innerHTML = html;
+}
+
+function updKbar(selected) {
+  var W = S.W;
+  var usedW = 0;
+  for (var k = 0; k < (selected || []).length; k++) {
+    var it = S.items[selected[k]-1];
+    if (it) usedW += it.w;
+  }
+  var pct = Math.min(100, (usedW / W) * 100);
+  var bar = document.getElementById('capBar');
+  bar.style.width = pct + '%';
+  bar.className = 'kb' + (usedW > W ? ' ov' : '');
+  document.getElementById('capLbl').textContent = usedW + ' / ' + W;
+  var names = selected && selected.length ? selected.map(function(x) { return 'i' + x; }).join(', ') : 'none';
+  document.getElementById('selLbl').textContent = 'Selected: ' + names;
+}
+
+// =====================================================
+// STATUS / EXPLANATION / STATS
+// =====================================================
+function setStatus(s) {
+  var el = document.getElementById('statusBadge');
+  el.className = 'status-badge s-' + s;
+  el.textContent = s.toUpperCase();
+}
+
+function setEx(text, type) {
+  var el = document.getElementById('exBox');
+  var map = {
+    inc:  { cls:'ex-inc',  icon:'&#10003;', tag:'xt-inc',  label:'INCLUDE'   },
+    exc:  { cls:'ex-exc',  icon:'&#10007;', tag:'xt-exc',  label:'EXCLUDE'   },
+    cmp:  { cls:'ex-cmp',  icon:'&#8652;',  tag:'xt-cmp',  label:'COMPARE'   },
+    tb:   { cls:'ex-tb',   icon:'&#8593;',  tag:'xt-tb',   label:'TRACEBACK' },
+    done: { cls:'ex-done', icon:'&#9733;',  tag:'xt-done', label:'DONE'      },
+    init: { cls:'ex-init', icon:'&#9711;',  tag:'xt-init', label:'IDLE'      }
+  };
+  var t = map[type] || map['cmp'];
+  el.className = 'exbox ' + t.cls;
+  el.innerHTML = '<div class="exh"><span class="xtag ' + t.tag + '">' + t.icon + ' ' + t.label + '</span>'
+    + (type === 'done' ? '<span style="font-size:.63rem;color:var(--yellow);letter-spacing:.05em">OPTIMAL SOLUTION FOUND</span>' : '')
+    + '</div><div class="exb">' + richEx(text) + '</div>';
+}
+
+function richEx(t) {
+  return t
+    .replace(/K\[(\d+)\]\[(\d+)\]/g, '<span class="ec">K[$1][$2]</span>')
+    .replace(/Item (\d+)/g, '<span class="ei">Item $1</span>')
+    .replace(/= (\d+)(?=[\s.,<]|$)/g, '= <span class="ev">$1</span>')
+    .replace(/\bInclude\b/g, '<span class="ew">Include</span>')
+    .replace(/\bExclude\b/g, '<span class="el">Exclude</span>');
+}
+
+function updStats(s) {
+  if (!s) return;
+  document.getElementById('stLookups').textContent = s.lookups  || 0;
+  document.getElementById('stComps').textContent   = s.comparisons || 0;
+  document.getElementById('stCells').textContent   = s.cells    || 0;
+  var n = S.items.length, W = S.W;
+  if (S.dp && S.dp[n] && S.dp[n][W] !== undefined && S.dp[n][W] > 0) {
+    document.getElementById('stBest').textContent = S.dp[n][W];
+    var tbV = document.getElementById('tbMaxV');
+    var ntbV= document.getElementById('ntbMaxV');
+    if (tbV) tbV.textContent = S.dp[n][W];
+    if (ntbV) ntbV.textContent = S.dp[n][W];
+  }
+  var data = [];
+  for (var i = 0; i <= S.cur && i < S.steps.length; i++) {
+    var st = S.steps[i].stats;
+    if (st) data.push({ x:i, y:(st.cells||0)+(st.comparisons||0) });
+  }
+  drawLive(data);
+}
+
+// =====================================================
+// HISTORY
+// =====================================================
+function stype(step) {
+  if (step.type === 'fill' && step.included === true)  return 'inc';
+  if (step.type === 'fill' && step.included === false) return 'exc';
+  if (step.type === 'compare')  return 'cmp';
+  if (step.type === 'tb-inc' || step.type === 'tb-skip') return 'trc';
+  if (step.type === 'done')     return 'don';
+  return 'ini';
+}
+
+function chip(type) {
+  var m = {
+    inc: { cls:'ch-inc', icon:'&#10003;', lbl:'Include'   },
+    exc: { cls:'ch-exc', icon:'&#10007;', lbl:'Exclude'   },
+    cmp: { cls:'ch-cmp', icon:'&#8652;',  lbl:'Compare'   },
+    trc: { cls:'ch-trc', icon:'&#8593;',  lbl:'Traceback' },
+    ini: { cls:'ch-ini', icon:'&#9711;',  lbl:'Init'      },
+    don: { cls:'ch-don', icon:'&#9733;',  lbl:'Done'      }
+  };
+  var t = m[type] || m['cmp'];
+  return '<span class="hchip ' + t.cls + '">' + t.icon + ' ' + t.lbl + '</span>';
+}
+
+function addHist(step) {
+  S.history.push(step);
+  if (S.history.length > 30) S.history.shift();
+  var tbody = document.getElementById('histBody');
+  var html = '';
+  for (var i = 0; i < S.history.length; i++) {
+    var h = S.history[i];
+    var gn = S.cur - S.history.length + i + 2;
+    var cur = i === S.history.length - 1;
+    var st = stype(h);
+    var cv = (h.i > 0 && h.w >= 0 && h.dp && h.dp[h.i]) ? h.dp[h.i][h.w] : '--';
+    var il = h.i > 0 ? '<span style="color:var(--accent);font-weight:700">i' + h.i + '</span>' : '--';
+    var sc = st==='inc'?'var(--green)':st==='exc'?'var(--red)':st==='trc'?'var(--purple)':st==='don'?'var(--yellow)':'var(--text2)';
+    var strip = '<td style="padding:0;width:4px"><div style="width:4px;min-height:25px;background:' + sc + ';opacity:.8;border-radius:2px 0 0 2px"></div></td>';
+    html += '<tr class="hrow' + (cur ? ' cur-row' : '') + '" data-hidx="' + i + '" onclick="jumpHist(' + i + ')">'
+      + strip
+      + '<td style="color:var(--text2);font-size:.63rem">' + gn + '</td>'
+      + '<td>' + il + '</td>'
+      + '<td style="color:var(--text2)">' + (h.w >= 0 ? h.w : '--') + '</td>'
+      + '<td style="font-weight:700">' + cv + '</td>'
+      + '<td>' + chip(st) + '</td></tr>';
+  }
+  tbody.innerHTML = html;
+  tbody.parentElement.scrollTop = tbody.parentElement.scrollHeight;
+}
+
+function jumpHist(histIdx) {
+  var gi = S.cur - S.history.length + histIdx + 1;
+  if (gi >= 0 && gi < S.steps.length) {
+    pauseAnim();
+    stepFwd(gi);
+    setTimeout(function() {
+      var row = document.querySelector('.hrow[data-hidx="' + histIdx + '"]');
+      if (row) row.scrollIntoView({ block:'nearest', behavior:'smooth' });
+      var step = S.steps[gi];
+      if (step) showHPrev(step);
+    }, 60);
+  }
+}
+
+function showHPrev(step) {
+  var el = document.getElementById('hprev');
+  if (!el || !step.ex) { if (el) el.style.display = 'none'; return; }
+  var colors = { inc:'var(--green)', exc:'var(--red)', cmp:'var(--accent)', trc:'var(--purple)', don:'var(--yellow)', ini:'var(--text2)' };
+  el.style.borderLeftColor = colors[stype(step)] || 'var(--accent)';
+  el.style.display = 'block';
+  el.textContent = step.ex;
+  clearTimeout(el._t);
+  el._t = setTimeout(function() { el.style.display = 'none'; }, 4000);
+}
+
+// =====================================================
+// TABS
+// =====================================================
+document.getElementById('mainTabs').addEventListener('click', function(e) {
+  var tab = e.target.closest('.tab');
+  if (tab) switchTab(tab.dataset.tab);
+});
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.toggle('active', t.dataset.tab === name); });
+  document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.toggle('active', t.id === 'tab-' + name); });
+  if (name === 'clo1') drawGrowth();
+  if (name === 'clo2') updateSortDisp();
+}
+
+function tog(key) {
+  var body  = document.getElementById(key + 'b');
+  var arrow = document.getElementById(key + 'a');
+  var open  = body.classList.toggle('open');
+  arrow.innerHTML = open ? '&#9660;' : '&#9658;';
+}
+
+// =====================================================
+// GROWTH CHART
+// =====================================================
+function drawGrowth() {
+  var W  = parseInt(document.getElementById('gW').value) || 10;
+  var maxN = parseInt(document.getElementById('gN').value) || 12;
+  document.getElementById('gWv').textContent = W;
+  document.getElementById('gNv').textContent = maxN;
+  var svg = document.getElementById('gChart');
+  var rect = svg.getBoundingClientRect();
+  var sw = rect.width || 600, sh = 230;
+  var pad = {l:58,r:16,t:18,b:28};
+  var cw = sw-pad.l-pad.r, ch = sh-pad.t-pad.b;
+  var ns = []; for (var i = 2; i <= maxN; i++) ns.push(i);
+  var dpOps = ns.map(function(n) { return n * W; });
+  var bfOps = ns.map(function(n) { return Math.pow(2, n); });
+  var maxY = Math.max.apply(null, bfOps.slice(0,8).concat(dpOps)) * 1.1;
+  var xs = function(n) { return (n-2)/(maxN-2)*cw+pad.l; };
+  var ys = function(v) { return sh-pad.b - Math.min(v/maxY,1)*ch; };
+  var dpPath = ns.map(function(n,i) { return (i===0?'M':'L')+xs(n)+','+ys(dpOps[i]); }).join(' ');
+  var bfPath = ns.map(function(n,i) { return (i===0?'M':'L')+xs(n)+','+ys(bfOps[i]); }).join(' ');
+  var ticks = [0,.25,.5,.75,1].map(function(t) { return {v:t*maxY, y:sh-pad.b-t*ch}; });
+  function fmtY(v) { return v>=1e6?(v/1e6).toFixed(0)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':Math.round(v); }
+  var html = ticks.map(function(t) {
+    return '<line x1="'+pad.l+'" x2="'+(sw-pad.r)+'" y1="'+t.y+'" y2="'+t.y+'" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>'
+      + '<text x="'+(pad.l-5)+'" y="'+(t.y+4)+'" fill="var(--text2)" font-size="9" text-anchor="end" font-family="monospace">'+fmtY(t.v)+'</text>';
+  }).join('');
+  html += ns.filter(function(_,i){return i%2===0;}).map(function(n) {
+    return '<text x="'+xs(n)+'" y="'+(sh-pad.b+14)+'" fill="var(--text2)" font-size="9" text-anchor="middle" font-family="monospace">n='+n+'</text>';
+  }).join('');
+  var dpArea = dpPath + ' L'+xs(ns[ns.length-1])+','+(sh-pad.b)+' L'+xs(2)+','+(sh-pad.b)+'Z';
+  html += '<path d="'+dpArea+'" fill="var(--accent)" opacity=".07"/>';
+  html += '<path d="'+bfPath+'" fill="none" stroke="var(--red)" stroke-width="2" stroke-dasharray="5,3"/>';
+  html += '<path d="'+dpPath+'" fill="none" stroke="var(--accent)" stroke-width="2.5"/>';
+  html += '<line x1="'+pad.l+'" x2="'+pad.l+'" y1="'+pad.t+'" y2="'+(sh-pad.b)+'" stroke="var(--border)"/>';
+  html += '<line x1="'+pad.l+'" x2="'+(sw-pad.r)+'" y1="'+(sh-pad.b)+'" y2="'+(sh-pad.b)+'" stroke="var(--border)"/>';
+  svg.innerHTML = html;
+}
+
+function drawLive(data) {
+  var svg = document.getElementById('lChart');
+  if (!svg) return;
+  var rect = svg.getBoundingClientRect();
+  var sw = rect.width || 400, sh = 150;
+  var pad = {l:46,r:14,t:8,b:26};
+  var cw = sw-pad.l-pad.r, ch = sh-pad.t-pad.b;
+  if (!data || data.length < 2) {
+    svg.innerHTML = '<text x="50%" y="50%" fill="var(--text2)" font-size="11" text-anchor="middle">Build and play to see live operation count</text>';
+    return;
+  }
+  var maxY = 1;
+  for (var i = 0; i < data.length; i++) if (data[i].y > maxY) maxY = data[i].y;
+  maxY *= 1.1;
+  var mxX = data.length - 1;
+  var xs = function(i) { return i/mxX*cw+pad.l; };
+  var ys = function(v) { return sh-pad.b-v/maxY*ch; };
+  var path = data.map(function(d,i) { return (i===0?'M':'L')+xs(i)+','+ys(d.y); }).join(' ');
+  svg.innerHTML = '<path d="'+path+' L'+xs(mxX)+','+(sh-pad.b)+' L'+xs(0)+','+(sh-pad.b)+'Z" fill="var(--accent)" opacity=".12"/>'
+    + '<path d="'+path+'" fill="none" stroke="var(--accent)" stroke-width="2"/>'
+    + '<line x1="'+pad.l+'" x2="'+pad.l+'" y1="'+pad.t+'" y2="'+(sh-pad.b)+'" stroke="var(--border)"/>'
+    + '<line x1="'+pad.l+'" x2="'+(sw-pad.r)+'" y1="'+(sh-pad.b)+'" y2="'+(sh-pad.b)+'" stroke="var(--border)"/>'
+    + '<text x="'+(pad.l-5)+'" y="'+(sh-pad.b)+'" fill="var(--text2)" font-size="9" text-anchor="end" font-family="monospace">0</text>'
+    + '<text x="'+(pad.l-5)+'" y="'+(pad.t+10)+'" fill="var(--text2)" font-size="9" text-anchor="end" font-family="monospace">'+Math.round(maxY)+'</text>'
+    + '<text x="'+(sw/2)+'" y="'+sh+'" fill="var(--text2)" font-size="9" text-anchor="middle">Steps</text>';
+}
+
+// =====================================================
+// SORTING TAB
+// =====================================================
+function updateSortDisp() {
+  var items = S.items, cont = document.getElementById('sortDisp');
+  if (!items.length) { cont.innerHTML = ''; return; }
+  var sorted = items.map(function(it,i) { return {w:it.w,v:it.v,idx:i+1,ratio:it.v/it.w}; });
+  sorted.sort(function(a,b) { return b.ratio-a.ratio; });
+  cont.innerHTML = '<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    + sorted.map(function(it) {
+        return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:.74rem;min-width:68px">'
+          + '<div style="color:var(--accent);font-weight:700">Item ' + it.idx + '</div>'
+          + '<div>v=' + it.v + ', w=' + it.w + '</div>'
+          + '<div style="color:var(--yellow);font-family:monospace;margin-top:4px">v/w=' + it.ratio.toFixed(2) + '</div>'
+          + '</div>';
+      }).join('')
+    + '</div><div style="font-size:.74rem;color:var(--text2);margin-top:8px">Ranked by value/weight ratio (greedy order)</div>';
+}
+
+function animSort() {
+  var items = S.items;
+  var sorted = items.map(function(it,i) { return {w:it.w,v:it.v,idx:i+1,ratio:it.v/it.w}; });
+  sorted.sort(function(a,b) { return b.ratio-a.ratio; });
+  var cont = document.getElementById('sortDisp'), step = 0;
+  document.getElementById('sortMsg').textContent = 'Sorting by v/w ratio (descending)...';
+  function go() {
+    if (step >= sorted.length) {
+      document.getElementById('sortMsg').textContent = 'Sorted! Greedy picks in this order. But DP finds the true optimum.';
+      return;
+    }
+    cont.innerHTML = '<div style="display:flex;gap:8px;flex-wrap:wrap">'
+      + sorted.map(function(it,i) {
+          var active = i===step, done = i<step;
+          return '<div style="background:'+(active?'#1a2640':done?'#182e22':'var(--bg3)')+';border:1px solid '+(active?'var(--accent)':done?'var(--green)':'var(--border)')+';border-radius:8px;padding:10px;text-align:center;font-size:.74rem;min-width:68px;transition:all 200ms">'
+            + '<div style="color:'+(active?'var(--accent)':done?'var(--green)':'var(--text2)')+';font-weight:700">Item ' + it.idx + '</div>'
+            + '<div>v=' + it.v + ', w=' + it.w + '</div>'
+            + '<div style="color:var(--yellow);font-family:monospace;margin-top:4px">v/w=' + it.ratio.toFixed(2) + '</div>'
+            + (done ? '<div style="color:var(--green);font-size:.63rem">&#10003; picked</div>' : '')
+            + '</div>';
+        }).join('') + '</div>';
+    step++;
+    setTimeout(go, 500);
+  }
+  go();
+}
+
+function updTbDisp(step) {
+  var svg = document.getElementById('tbSVG');
+  if (!step || !S.dp || S.dp.length < 2) {
+    svg.innerHTML = '<text x="50%" y="50%" fill="var(--text2)" font-size="11" text-anchor="middle">Run the algorithm first</text>';
+    return;
+  }
+  var n = S.items.length, W = S.W, dp = S.dp, items = S.items, sel = step.selected || [];
+  var cells = [], tw = W, i = n;
+  while (i >= 1) {
+    cells.push({i:i, w:tw, inc: dp[i][tw] !== dp[i-1][tw]});
+    if (dp[i][tw] !== dp[i-1][tw]) tw -= items[i-1].w;
+    i--;
+  }
+  var sw = svg.parentElement.offsetWidth || 400, sh = 100;
+  var cw = Math.min(50, sw/(cells.length+1));
+  svg.setAttribute('viewBox','0 0 '+sw+' '+sh);
+  var html = '<defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6Z" fill="var(--accent)"/></marker></defs>';
+  for (var k = 0; k < cells.length; k++) {
+    var c = cells[k], x = 20 + k*(cw+6);
+    html += '<rect x="'+x+'" y="20" width="'+cw+'" height="36" rx="5" fill="'+(c.inc?'#182e22':'var(--bg3)')+'" stroke="'+(c.inc?'var(--green)':'var(--border)')+'"/>';
+    html += '<text x="'+(x+cw/2)+'" y="39" fill="'+(c.inc?'var(--green)':'var(--text2)')+'" font-size="9" text-anchor="middle">K['+c.i+']['+c.w+']</text>';
+    html += '<text x="'+(x+cw/2)+'" y="51" fill="var(--text)" font-size="10" text-anchor="middle" font-weight="bold">'+dp[c.i][c.w]+'</text>';
+    if (k < cells.length-1) html += '<line x1="'+(x+cw)+'" y1="38" x2="'+(x+cw+6)+'" y2="38" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)"/>';
+  }
+  svg.innerHTML = html;
+  document.getElementById('tbMsg').textContent = 'Traceback found items: {' + (sel.join(',') || 'none') + '} | Weight: ' + sel.reduce(function(a,i){return a+(items[i-1]?items[i-1].w:0);},0) + '/' + W;
+  var tbI = document.getElementById('tbItems'), tbW = document.getElementById('tbWt');
+  if (tbI) tbI.textContent = sel.length ? '{'+sel.join(',')+'}' : 'none';
+  if (tbW) tbW.textContent = sel.reduce(function(a,i){return a+(items[i-1]?items[i-1].w:0);},0) + ' / ' + W;
+}
+
+// =====================================================
+// GREEDY EXAMPLE
+// =====================================================
+function buildGreedy() {
+  var cont = document.getElementById('greedyEx');
+  var items = [{w:10,v:60},{w:20,v:100},{w:30,v:120}], W = 50;
+  var sorted = items.map(function(it,i){return {w:it.w,v:it.v,idx:i+1,ratio:it.v/it.w};}).sort(function(a,b){return b.ratio-a.ratio;});
+  var gW=0,gV=0,gSel=[];
+  for (var k=0;k<sorted.length;k++){var it=sorted[k];if(gW+it.w<=W){gW+=it.w;gV+=it.v;gSel.push(it.idx);}}
+  var n=items.length;
+  var dp=[];
+  for(var i=0;i<=n;i++){dp.push([]);for(var w=0;w<=W;w++)dp[i].push(0);}
+  for(var i=1;i<=n;i++)for(var w=0;w<=W;w++){
+    if(items[i-1].w>w)dp[i][w]=dp[i-1][w];
+    else dp[i][w]=Math.max(dp[i-1][w],items[i-1].v+dp[i-1][w-items[i-1].w]);
+  }
+  var tw2=W,dpSel=[];
+  for(var i=n;i>=1;i--){if(dp[i][tw2]!==dp[i-1][tw2]){dpSel.push(i);tw2-=items[i-1].w;}}
+  var dpV=dp[n][W],dpW=dpSel.reduce(function(a,i){return a+items[i-1].w;},0);
+  cont.innerHTML='<div style="font-size:.78rem;color:var(--text2);margin-bottom:10px"><strong>Items:</strong> i1(w=10,v=60), i2(w=20,v=100), i3(w=30,v=120) | <strong>W=50</strong><br><strong>Ratios:</strong> i1=6.0, i2=5.0, i3=4.0</div>'
+    +'<div class="compare-grid">'
+    +'<div class="ccard los"><h4 style="color:var(--red)">&#10007; Greedy (by ratio)</h4><div class="ci"><span>Selected</span><span>Items {'+gSel.join(',')+'}</span></div><div class="ci"><span>Weight</span><span>'+gW+'/'+W+'</span></div><div class="ci"><span style="color:var(--red)">Value</span><span style="color:var(--red)">'+gV+'</span></div></div>'
+    +'<div class="ccard win"><h4 style="color:var(--green)">&#10003; DP (optimal)</h4><div class="ci"><span>Selected</span><span>Items {'+dpSel.sort().join(',')+'}</span></div><div class="ci"><span>Weight</span><span>'+dpW+'/'+W+'</span></div><div class="ci"><span style="color:var(--green)">Value</span><span style="color:var(--green)">'+dpV+' &#127942;</span></div></div>'
+    +'</div>'
+    +'<div style="margin-top:10px;background:var(--bg3);border-left:3px solid var(--yellow);padding:9px 13px;border-radius:0 var(--r) var(--r) 0;font-size:.76rem">&#9888; Greedy gets <strong>'+gV+'</strong> but DP finds the true optimum of <strong>'+dpV+'</strong> &mdash; a difference of +'+(dpV-gV)+'!</div>';
+}
+
+// =====================================================
+// DECISION TREE
+// =====================================================
+function drawTree() {
+  var svg = document.getElementById('dtSVG');
+  var VW=640,VH=210; svg.setAttribute('viewBox','0 0 '+VW+' '+VH);
+  var nodes=[
+    {x:320,y:18,lv:0},{x:190,y:72,lv:1},{x:450,y:72,lv:1},
+    {x:112,y:130,lv:2},{x:260,y:130,lv:2},{x:378,y:130,lv:2},{x:528,y:130,lv:2},
+    {x:68,y:190,lv:3,lbl:'{}'},{x:140,y:190,lv:3,lbl:'{3}'},{x:220,y:190,lv:3,lbl:'{2}'},
+    {x:296,y:190,lv:3,lbl:'{2,3}'},{x:346,y:190,lv:3,lbl:'{1}'},{x:408,y:190,lv:3,lbl:'{1,3}'},
+    {x:480,y:190,lv:3,lbl:'{1,2}'},{x:556,y:190,lv:3,lbl:'{1,2,3}'}
+  ];
+  var edges=[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6],[3,7],[3,8],[4,9],[4,10],[5,11],[5,12],[6,13],[6,14]];
+  var SC=['#3d4a60','#4a6080','#307080','#3ecf8e'];
+  var R=[13,12,11,9];
+  var out='';
+  edges.forEach(function(e){
+    var a=nodes[e[0]],b=nodes[e[1]];
+    out+='<line x1="'+a.x+'" y1="'+(a.y+R[a.lv])+'" x2="'+b.x+'" y2="'+(b.y-R[b.lv])+'" stroke="'+SC[b.lv]+'" stroke-width="1.5" opacity=".7"/>';
+  });
+  var elabels=[{e:[0,1],l:'0',x:240,y:45},{e:[0,2],l:'1',x:400,y:45},{e:[1,3],l:'0',x:138,y:102},{e:[1,4],l:'1',x:234,y:102},{e:[2,5],l:'0',x:406,y:102},{e:[2,6],l:'1',x:500,y:102}];
+  elabels.forEach(function(el){
+    out+='<rect x="'+(el.x-6)+'" y="'+(el.y-8)+'" width="12" height="12" rx="3" fill="#1a1e28" stroke="'+(el.l==='1'?'#3ecf8e44':'#4a506044')+'"/>';
+    out+='<text x="'+el.x+'" y="'+(el.y+1)+'" fill="'+(el.l==='1'?'#3ecf8e':'#607080')+'" font-size="9" text-anchor="middle" font-weight="bold">'+el.l+'</text>';
+  });
+  nodes.forEach(function(n){
+    var leaf=n.lv===3;
+    out+='<circle cx="'+n.x+'" cy="'+n.y+'" r="'+R[n.lv]+'" fill="#1a1e28" stroke="'+SC[n.lv]+'" stroke-width="1.5"/>';
+    if(leaf){
+      out+='<text x="'+n.x+'" y="'+(n.y+3)+'" fill="'+SC[n.lv]+'" font-size="6.5" text-anchor="middle">'+(n.lbl||'')+'</text>';
+    } else {
+      out+='<text x="'+n.x+'" y="'+(n.y+4)+'" fill="'+SC[n.lv]+'" font-size="9" text-anchor="middle" font-weight="bold">&#8226;</text>';
+    }
+  });
+  out+='<text x="'+VW/2+'" y="'+(VH-2)+'" fill="#4a5568" font-size="9" text-anchor="middle">Brute force: 2&#179;=8 leaf nodes. DP replaces this entire tree with a compact (n+1)x(W+1) table.</text>';
+  svg.innerHTML=out;
+}
+
+// =====================================================
+// START
+// =====================================================
+window.addEventListener('load', init);
+window.addEventListener('resize', function() { drawGrowth(); });
+</script>
+</body>
+</html>
