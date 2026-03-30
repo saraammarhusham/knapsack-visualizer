@@ -104,7 +104,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .sval2{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:800;color:var(--accent)}
 
 /* ── EXPLANATION BOX ── */
-.exbox{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);overflow:hidden;transition:border-left-color 200ms ease,background 200ms ease;font-size:.79rem;line-height:1.7;min-height:64px}
+.exbox{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);overflow:hidden;transition:border-left-color 200ms ease,background 200ms ease;font-size:.79rem;line-height:1.7;min-height:80px}
 .exbox .exh{display:flex;align-items:center;gap:8px;padding:6px 12px 5px;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.18);font-size:.66rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.05em}
 .exbox .exb{padding:10px 13px 11px;animation:exenter 200ms ease}
 @keyframes exenter{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
@@ -288,6 +288,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .ap-diff-text{font-size:.84rem;color:#c0c8d8;line-height:1.72;word-wrap:break-word;overflow-wrap:break-word}
 .ap-diff-text strong{color:var(--text)}
 
+/* ── DP TABLE + EXPLANATION SIDE-BY-SIDE ROW ── */
+.dp-ex-row{display:flex;gap:14px;align-items:flex-start;width:100%}
+.dp-ex-table{flex:0 0 65%;min-width:0;overflow:hidden}
+.dp-ex-explain{flex:0 0 calc(35% - 14px);min-width:0;display:flex;flex-direction:column;gap:0;word-wrap:break-word;overflow-wrap:break-word}
+.dp-ex-explain .exbox{flex:1;min-height:120px}
+@media(max-width:980px){
+  .dp-ex-row{flex-direction:column}
+  .dp-ex-table{flex:none;width:100%}
+  .dp-ex-explain{flex:none;width:100%}
+}
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -377,13 +388,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     </div>
   </div>
 
-  <div class="psec">
-    <div class="stitle">Step Explanation</div>
-    <div class="exbox ex-init" id="exBox">
-      <div class="exh"><span class="xtag xt-init">&#9711; IDLE</span></div>
-      <div class="exb">Load a preset or enter items, then click &#9881; Build to start the animation.</div>
-    </div>
-  </div>
+
 
 </div>
 <!-- ════════════════════ RIGHT PANEL ════════════════════ -->
@@ -411,9 +416,32 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
       <div style="font-size:.72rem;color:var(--text2);margin-top:4px" id="selLbl">Selected: none</div>
     </div>
 
-    <div>
-      <div class="stitle" style="padding:0 4px;margin-bottom:8px">DP Table K[i][w] — Rows = items, Columns = capacity</div>
-      <div class="dp-wrap"><div class="dp-cont" id="dpTable"></div></div>
+    <!-- DP Table + Step Explanation side-by-side row -->
+    <div class="dp-ex-row">
+
+      <!-- Left: DP Table (~65%) -->
+      <div class="dp-ex-table">
+        <div class="stitle" style="padding:0 4px;margin-bottom:8px">DP Table K[i][w] — Rows = items, Columns = capacity</div>
+        <div class="dp-wrap"><div class="dp-cont" id="dpTable"></div></div>
+      </div>
+
+      <!-- Right: Step Explanation + Recurrence Walkthrough (~35%) -->
+      <div class="dp-ex-explain">
+        <div class="stitle" style="padding:0 4px;margin-bottom:8px">Step Explanation</div>
+        <div class="exbox ex-init" id="exBox">
+          <div class="exh"><span class="xtag xt-init">&#9711; IDLE</span></div>
+          <div class="exb">Load a preset or enter items, then click &#9881; Build to start.</div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div class="stitle" style="padding:0 4px;margin-bottom:8px">
+            Recurrence Walkthrough
+            <span style="font-size:.61rem;font-weight:400;color:var(--text2);letter-spacing:0;text-transform:none;margin-left:4px">(click any DP cell)</span>
+          </div>
+          <div id="recDisp" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:13px;font-family:'JetBrains Mono',monospace;font-size:.78rem;min-height:60px;line-height:1.8;color:var(--text)"><span style="color:var(--text2)">Click any filled cell in the table to see how it was computed&hellip;</span></div>
+        </div>
+      </div>
+
     </div>
 
     <div>
@@ -689,9 +717,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     </div>
 
     <div class="chart-area">
-      <div class="stitle">Recurrence Walkthrough (Click any DP cell in Visualize tab)</div>
-      <div style="font-size:.78rem;color:var(--text2);margin-bottom:8px">Click any filled cell in the DP table (Visualize tab) to see the full recurrence breakdown for that cell.</div>
-      <div id="recDisp" style="background:var(--bg3);border-radius:var(--r);padding:13px;font-family:monospace;font-size:.8rem;min-height:46px;line-height:1.8"><span style="color:var(--text2)">Click a cell in the DP table (Visualize tab) after building steps&hellip;</span></div>
+      <div class="stitle">Recurrence Walkthrough</div>
+      <div style="font-size:.78rem;color:var(--text2);margin-bottom:8px">The live recurrence breakdown has moved into the Visualize tab — click any filled DP cell there to see exactly how each K[i][w] value was computed.</div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:11px 14px;font-size:.8rem;color:var(--text2)">
+        <span style="font-size:1.1rem">&#128065;</span>
+        Switch to the <strong style="color:var(--accent);margin:0 4px">Visualize</strong> tab, build steps, then click any cell in the DP table to see the recurrence breakdown appear instantly on the right side.
+      </div>
     </div>
   </div>
 
@@ -1529,7 +1560,6 @@ function cellClick(i, w) {
       + '<span style="color:var(--red)">Exclude: K[' + (i-1) + '][' + w + ']=' + exc + '</span>';
   }
   document.getElementById('recDisp').innerHTML = html;
-  switchTab('clo3');
 }
 
 // ═══════════════════════════════════════════════
