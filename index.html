@@ -374,6 +374,34 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .ap-badge.dp{background:#1a2a40;color:var(--accent);border:1px solid var(--accent)}
 .ap-badge.gr{background:#2a2410;color:var(--yellow);border:1px solid var(--yellow)}
 
+/* ── MODAL / POPUP ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:720px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.6);margin:auto;animation:modalIn 200ms cubic-bezier(.4,0,.2,1)}
+@keyframes modalIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.modal-header h2{font-size:1rem;font-weight:800;color:var(--text);margin:0}
+.modal-close{background:var(--bg4);border:1px solid var(--border);color:var(--text2);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;transition:all var(--tr);flex-shrink:0}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal-body{padding:24px 26px;font-size:.84rem;line-height:1.75;color:#c0c8d8;max-height:calc(100vh - 180px);overflow-y:auto}
+.modal-body p{margin-bottom:12px}
+.modal-body h3{font-size:.95rem;font-weight:800;color:var(--accent);margin:22px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.modal-body h3:first-child{margin-top:0}
+.modal-body h4{font-size:.82rem;font-weight:800;color:var(--text);margin:14px 0 6px}
+.modal-recurrence{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:14px 18px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.8;word-wrap:break-word;overflow-wrap:break-word}
+.modal-recurrence .rc-label{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-bottom:8px}
+.modal-recurrence .rc-formula{color:var(--yellow);font-size:.88rem;font-weight:700;margin-bottom:6px}
+.modal-recurrence .rc-cond{color:var(--text2);font-size:.78rem}
+.proof-step{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.proof-step:last-child{border-bottom:none}
+.proof-step-label{flex-shrink:0;font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:rgba(79,156,249,.1);border:1px solid rgba(79,156,249,.25);border-radius:6px;padding:4px 9px;height:fit-content;margin-top:2px;white-space:nowrap}
+.proof-step-body{font-size:.83rem;color:#c0c8d8;line-height:1.7}
+.proof-step-body strong{color:var(--text)}
+.modal-note{background:var(--bg3);border-left:3px solid var(--yellow);padding:11px 15px;border-radius:0 var(--r) var(--r) 0;font-size:.82rem;line-height:1.65;margin:12px 0}
+.view-recurrence-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 20px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;color:var(--text);transition:all var(--tr)}
+.view-recurrence-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--bg2)}
+.view-recurrence-btn .vr-icon{width:32px;height:32px;background:rgba(79,156,249,.12);border:1px solid rgba(79,156,249,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -410,8 +438,65 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <p class="subtitle">An interactive educational tool for learning brute force, dynamic programming, and greedy approaches to the classic 0/1 Knapsack optimization problem.</p>
 
     <div class="home-intro">
-      <p>The <strong>0/1 Knapsack problem</strong> asks: given a set of items each with a weight and value, and a bag with a maximum weight capacity, which items should you pack to maximize total value? Each item is either fully included or excluded — no fractions.</p>
-      <p>This tool helps you understand the problem visually and step by step, compare three different solving approaches, and see exactly why Dynamic Programming is the right choice.</p>
+
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:20px">
+        <div style="font-size:.63rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px"><span style="display:block;width:3px;height:10px;background:var(--accent);border-radius:2px"></span>What is a problem — and what makes it an optimization problem?</div>
+        <p>In computing, a <strong>problem</strong> is a clearly described situation where you have some input and need to find the best or correct output. An <strong>optimization problem</strong> is a specific kind: there may be many possible answers, but you want the one that is the <em>best</em> by some measure — the highest value, the lowest cost, the shortest path, and so on.</p>
+        <p style="margin-top:10px">Not every problem has one clear right answer. In optimization, the challenge is not just finding <em>a</em> solution, but finding the <em>best possible</em> one — often from a huge number of possibilities.</p>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:20px">
+        <div style="font-size:.63rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px"><span style="display:block;width:3px;height:10px;background:var(--accent);border-radius:2px"></span>What is the 0/1 Knapsack problem?</div>
+        <p>Imagine you are going on a trip and you have a <strong>backpack</strong> that can only carry a limited total weight — say, 10 kilograms. You have several items in front of you, and each item has two properties:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+            <div style="font-size:.75rem;font-weight:800;color:var(--yellow);margin-bottom:6px">&#9877; Weight</div>
+            <div style="font-size:.82rem;color:#c0c8d8;line-height:1.6">How heavy the item is. This is the cost of packing it. Every item you include uses up some of your bag&rsquo;s limited space.</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+            <div style="font-size:.75rem;font-weight:800;color:var(--green);margin-bottom:6px">&#10024; Value</div>
+            <div style="font-size:.82rem;color:#c0c8d8;line-height:1.6">How useful or important the item is. This is what you gain by packing it. Your goal is to pack items that together give you the most total value.</div>
+          </div>
+        </div>
+        <p>The bag has a <strong>capacity</strong> — a hard limit on how much total weight it can hold. You want to choose a combination of items so that the total weight stays within the capacity, and the total value is as high as possible.</p>
+        <p style="margin-top:10px">This is the <strong>Knapsack problem</strong> — and it is one of the most famous optimization problems in computer science.</p>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:20px">
+        <div style="font-size:.63rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px"><span style="display:block;width:3px;height:10px;background:var(--accent);border-radius:2px"></span>What does "0/1" mean?</div>
+        <p>The name <strong>0/1 Knapsack</strong> comes from a simple rule: each item can only be either <em>fully taken</em> or <em>completely left behind</em>.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0">
+          <div style="background:#182e22;border:1px solid var(--green);border-radius:var(--r);padding:14px">
+            <div style="font-size:.75rem;font-weight:800;color:var(--green);margin-bottom:6px">1 — Take the whole item</div>
+            <div style="font-size:.82rem;color:#c0c8d8;line-height:1.6">You pack the entire item: you get its full value and it takes its full weight.</div>
+          </div>
+          <div style="background:#2e1818;border:1px solid var(--red);border-radius:var(--r);padding:14px">
+            <div style="font-size:.75rem;font-weight:800;color:var(--red);margin-bottom:6px">0 — Leave the item behind</div>
+            <div style="font-size:.82rem;color:#c0c8d8;line-height:1.6">You do not pack the item at all: no value gained, no weight used.</div>
+          </div>
+        </div>
+        <p>You cannot take half of an item or a quarter of it. Either it goes in the bag completely, or it does not go in at all. This is what makes the problem hard — and interesting.</p>
+        <p style="margin-top:10px">For example, if you have a laptop (heavy, very valuable) and a book (light, somewhat valuable), you cannot take half a laptop. You either pack the whole laptop or you leave it behind entirely.</p>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:20px">
+        <div style="font-size:.63rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px"><span style="display:block;width:3px;height:10px;background:var(--accent);border-radius:2px"></span>Why does this problem matter?</div>
+        <p>The 0/1 Knapsack problem appears in many real-world situations wherever you have limited resources and binary choices:</p>
+        <ul style="list-style:none;padding:0;margin:10px 0 10px 0">
+          <li style="padding:6px 0 6px 18px;position:relative;font-size:.82rem;color:#c0c8d8;border-bottom:1px solid rgba(255,255,255,.04)"><span style="position:absolute;left:0;color:var(--accent)">▸</span> <strong style="color:var(--text)">Project budgeting:</strong> Which projects should a company fund this year given a limited budget?</li>
+          <li style="padding:6px 0 6px 18px;position:relative;font-size:.82rem;color:#c0c8d8;border-bottom:1px solid rgba(255,255,255,.04)"><span style="position:absolute;left:0;color:var(--accent)">▸</span> <strong style="color:var(--text)">Cargo loading:</strong> Which boxes should go on a truck with a fixed weight limit?</li>
+          <li style="padding:6px 0 6px 18px;position:relative;font-size:.82rem;color:#c0c8d8;border-bottom:1px solid rgba(255,255,255,.04)"><span style="position:absolute;left:0;color:var(--accent)">▸</span> <strong style="color:var(--text)">Feature selection:</strong> Which features should a software team ship given limited development time?</li>
+          <li style="padding:6px 0 6px 18px;position:relative;font-size:.82rem;color:#c0c8d8"><span style="position:absolute;left:0;color:var(--accent)">▸</span> <strong style="color:var(--text)">Investment decisions:</strong> Which assets should be included in a portfolio with a fixed total cost?</li>
+        </ul>
+        <p style="margin-top:4px">In all of these cases, you must choose a subset of options that fits within a constraint and maximizes some objective. The difficulty is that with n items there are 2<sup>n</sup> possible subsets — even with just 30 items, that is over one billion combinations to consider. Finding the best one efficiently is a genuine challenge.</p>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:18px 22px;margin-bottom:4px">
+        <div style="font-size:.82rem;color:#c0c8d8;line-height:1.72">
+          <strong style="color:var(--text)">What this website does:</strong> This tool helps you understand the 0/1 Knapsack problem visually and step by step. You can enter items, watch the algorithm fill a table one cell at a time, read plain-language explanations of every decision, and compare three different approaches — brute force, dynamic programming, and greedy — to see exactly why Dynamic Programming is the most effective method.
+        </div>
+      </div>
+
     </div>
 
     <div class="how-card">
@@ -825,6 +910,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
         <div class="diff-dot" style="background:var(--green)"></div>
         <div class="diff-text"><strong>Why DP beats brute force:</strong> Both are correct. DP wins on efficiency by exploiting overlapping subproblems — the same sub-question is answered once and stored, instead of being re-explored exponentially. A (n+1)×(W+1) table replaces the entire 2<sup>n</sup> decision tree.</div>
       </div>
+    </div>
+
+    <!-- Recurrence proof trigger — at the very bottom of Comparison -->
+    <div class="content-block" style="border-top:1px solid var(--border);padding-top:28px;margin-top:8px">
+      <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px"><span style="display:block;width:3px;height:10px;background:var(--accent);border-radius:2px"></span>Formal Recurrence &amp; Correctness Proof</div>
+      <p style="font-size:.84rem;color:var(--text2);line-height:1.65;margin-bottom:16px">The DP recurrence K[i][w] = max(K[i&minus;1][w], value<sub>i</sub> + K[i&minus;1][w&minus;weight<sub>i</sub>]) is not just a formula — it can be formally proven correct using induction, and its O(nW) complexity follows directly from how the table is filled. Click below to see the full explanation.</p>
+      <button class="view-recurrence-btn" onclick="openProofModal()">
+        <span>Click to view recurrence</span>
+        <div class="vr-icon">&#8734;</div>
+      </button>
     </div>
 
   </div>
@@ -1873,16 +1968,252 @@ function buildGreedy() {
 // ═══════════════════════════════════════════════
 // START
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// MODAL: RECURRENCE PROOF
+// ═══════════════════════════════════════════════
+function openProofModal() {
+  document.getElementById('proofModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeProofModal(e) {
+  if (!e || e.target === document.getElementById('proofModal') || e.currentTarget === document.querySelector('.modal-close')) {
+    document.getElementById('proofModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeProofModal();
+});
+
 window.addEventListener('load', init);
 window.addEventListener('resize', function() { drawGrowth(); });
 </script>
 <!-- Hidden container for buildGreedy() output (used internally) -->
 <div id="greedyEx" style="display:none"></div>
+
+<!-- ═══════════════════════════════════════
+     MODAL: Recurrence and Proof
+═══════════════════════════════════════ -->
+<div class="modal-overlay" id="proofModal" onclick="closeProofModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>&#8734; Recurrence &amp; O(nW) Proof</h2>
+      <div class="modal-close" onclick="closeProofModal()" title="Close">&#10005;</div>
+    </div>
+    <div class="modal-body">
+
+      <!-- A: Recurrence -->
+      <h3>A &mdash; The DP Recurrence</h3>
+      <p>The core of the dynamic programming solution is a <strong>recurrence relation</strong> — a formula that expresses the answer to a larger problem in terms of smaller problems we have already solved.</p>
+
+      <div class="modal-recurrence">
+        <div class="rc-label">K[i][w] means:</div>
+        <p style="font-size:.82rem;color:#c0c8d8;margin-bottom:10px">The best total value we can achieve using the <strong style="color:var(--teal)">first i items</strong> with a knapsack capacity of exactly <strong style="color:var(--teal)">w</strong>.</p>
+        <div class="rc-label">When the current item fits (weight<sub>i</sub> &le; w):</div>
+        <div class="rc-formula">K[i][w] = max( K[i&minus;1][w], &nbsp; value<sub>i</sub> + K[i&minus;1][w &minus; weight<sub>i</sub>] )</div>
+        <div class="rc-label" style="margin-top:10px">When the current item is too heavy (weight<sub>i</sub> &gt; w):</div>
+        <div class="rc-formula">K[i][w] = K[i&minus;1][w]</div>
+      </div>
+
+      <h4>What each part means in plain language:</h4>
+      <div class="proof-step">
+        <div class="proof-step-label" style="color:var(--red);background:rgba(244,110,110,.1);border-color:rgba(244,110,110,.3)">Exclude</div>
+        <div class="proof-step-body"><strong>K[i&minus;1][w]</strong> — We skip item i entirely. The best we can do is whatever was achievable using the first i&minus;1 items with the same capacity w. Nothing about item i changes the result.</div>
+      </div>
+      <div class="proof-step">
+        <div class="proof-step-label" style="color:var(--green);background:rgba(62,207,142,.1);border-color:rgba(62,207,142,.3)">Include</div>
+        <div class="proof-step-body"><strong>value<sub>i</sub> + K[i&minus;1][w &minus; weight<sub>i</sub>]</strong> — We pack item i. We gain its value immediately, and the remaining capacity shrinks by its weight. The best result for that remaining capacity, using only the earlier items, is given by K[i&minus;1][w &minus; weight<sub>i</sub>].</div>
+      </div>
+      <div class="proof-step" style="border-bottom:none">
+        <div class="proof-step-label" style="color:var(--accent);background:rgba(79,156,249,.1);border-color:rgba(79,156,249,.3)">max()</div>
+        <div class="proof-step-body">We always choose whichever option gives the <strong>higher total value</strong>. If including gives more, we include. If excluding is better, we exclude. We never guess — we compute both options and pick the best.</div>
+      </div>
+
+      <div class="modal-note">
+        &#128161; <strong>Base cases:</strong> K[0][w] = 0 for all w (no items, no value). K[i][0] = 0 for all i (zero capacity, cannot pack anything). Every other cell is built on top of these foundations.
+      </div>
+
+      <!-- B: Time Complexity -->
+      <h3>B &mdash; Time Complexity: O(nW)</h3>
+      <p>The DP solution fills a table with <strong>(n + 1)</strong> rows and <strong>(W + 1)</strong> columns, where n is the number of items and W is the knapsack capacity.</p>
+
+      <div class="modal-recurrence" style="border-left-color:var(--yellow)">
+        <div class="rc-label">Why O(nW):</div>
+        <div style="font-size:.82rem;color:#c0c8d8;line-height:1.8">
+          &bull; There are (n + 1) rows — one for zero items, then one for each of the n items.<br>
+          &bull; There are (W + 1) columns — one for each possible capacity from 0 to W.<br>
+          &bull; Every single cell is filled exactly once — we never revisit a cell.<br>
+          &bull; Filling each cell takes constant work: look up two values, take the max, write one result.<br>
+          &bull; Total cells = (n + 1) &times; (W + 1) &asymp; nW<br>
+          &bull; Therefore, total running time = <strong style="color:var(--yellow)">O(nW)</strong>.
+        </div>
+      </div>
+
+      <p>This is dramatically better than brute force O(2<sup>n</sup>). With n=20 and W=20, brute force checks over 1 million subsets. DP fills 20&times;20 = 400 cells. The table replaces the entire exponential search tree.</p>
+
+      <!-- C: Proof by Induction -->
+      <h3>C &mdash; Why DP Is Correct: A Simple Proof by Induction</h3>
+      <p>We will show that for every cell K[i][w], the value stored is exactly the maximum value achievable using the first i items with capacity w. This uses a technique called <strong>mathematical induction</strong> — we prove it is true for the smallest cases, then show it stays true as we build up.</p>
+
+      <h4>Base idea</h4>
+      <p>We want to show: K[i][w] = the correct optimal value for items 1 through i with capacity w. If we can show this is true starting from the simplest cases, and that it stays true every time we add a new item, then by the time we reach K[n][W] we know it holds the correct final answer.</p>
+
+      <div class="proof-step">
+        <div class="proof-step-label">Base case</div>
+        <div class="proof-step-body">
+          <strong>Row 0 (no items):</strong> K[0][w] = 0 for every capacity w. This is correct — with zero items available, the best value you can achieve is always 0, regardless of how much space the bag has.<br><br>
+          <strong>Column 0 (zero capacity):</strong> K[i][0] = 0 for every item count i. This is also correct — if the bag has zero capacity, you cannot pack anything, so the best value is always 0.
+        </div>
+      </div>
+
+      <div class="proof-step">
+        <div class="proof-step-label">Hypothesis</div>
+        <div class="proof-step-body">
+          <strong>Assume it works for all smaller subproblems.</strong> Specifically, assume that for all cells in rows 0 through i&minus;1, K[i&minus;1][w] already holds the correct optimal value for those items and that capacity. In other words: assume every cell above the current row is already correct.
+        </div>
+      </div>
+
+      <div class="proof-step">
+        <div class="proof-step-label">Induction step</div>
+        <div class="proof-step-body">
+          <strong>Now show K[i][w] is also correct.</strong> We consider item i and capacity w. There are exactly two possibilities in any valid selection of items:<br><br>
+          <strong>Case 1 — item i is NOT included:</strong> The optimal selection uses only items from 1 to i&minus;1. By our assumption, K[i&minus;1][w] already holds this value correctly.<br><br>
+          <strong>Case 2 — item i IS included</strong> (only possible if weight<sub>i</sub> &le; w): We gain value<sub>i</sub> from item i, and the remaining capacity is w &minus; weight<sub>i</sub>. The best we can do with that remaining capacity using items 1 to i&minus;1 is K[i&minus;1][w &minus; weight<sub>i</sub>], which is also already correct by assumption.<br><br>
+          We take the maximum of both cases: max(K[i&minus;1][w], value<sub>i</sub> + K[i&minus;1][w &minus; weight<sub>i</sub>]). Since both options are computed correctly, the maximum is also correct.
+        </div>
+      </div>
+
+      <div class="proof-step" style="border-bottom:none">
+        <div class="proof-step-label">Conclusion</div>
+        <div class="proof-step-body">
+          By induction, every cell K[i][w] is filled correctly. In particular, K[n][W] — the bottom-right corner of the table — holds the correct optimal value using all n items with the full capacity W. This is the answer we want.<br><br>
+          <strong>Complexity:</strong> We fill (n+1)(W+1) cells exactly once. Each fill is O(1). Total time = O(nW). Since this is much smaller than O(2<sup>n</sup>) for any reasonably bounded W, DP is the practical choice for solving 0/1 Knapsack.
+        </div>
+      </div>
+
+      <div class="modal-note" style="margin-top:16px;border-left-color:var(--green)">
+        &#10003; <strong>Summary:</strong> The recurrence is correct because every decision (include or exclude) uses previously computed optimal answers. The complexity is O(nW) because we fill each of the (n+1)(W+1) cells exactly once with constant-time work. The table is both a storage device and a proof that we never recompute anything.
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 
 </script>
 <!-- Hidden container for buildGreedy() output (used internally) -->
 <div id="greedyEx" style="display:none"></div>
+
+<!-- ═══════════════════════════════════════
+     MODAL: Recurrence and Proof
+═══════════════════════════════════════ -->
+<div class="modal-overlay" id="proofModal" onclick="closeProofModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>&#8734; Recurrence &amp; O(nW) Proof</h2>
+      <div class="modal-close" onclick="closeProofModal()" title="Close">&#10005;</div>
+    </div>
+    <div class="modal-body">
+
+      <!-- A: Recurrence -->
+      <h3>A &mdash; The DP Recurrence</h3>
+      <p>The core of the dynamic programming solution is a <strong>recurrence relation</strong> — a formula that expresses the answer to a larger problem in terms of smaller problems we have already solved.</p>
+
+      <div class="modal-recurrence">
+        <div class="rc-label">K[i][w] means:</div>
+        <p style="font-size:.82rem;color:#c0c8d8;margin-bottom:10px">The best total value we can achieve using the <strong style="color:var(--teal)">first i items</strong> with a knapsack capacity of exactly <strong style="color:var(--teal)">w</strong>.</p>
+        <div class="rc-label">When the current item fits (weight<sub>i</sub> &le; w):</div>
+        <div class="rc-formula">K[i][w] = max( K[i&minus;1][w], &nbsp; value<sub>i</sub> + K[i&minus;1][w &minus; weight<sub>i</sub>] )</div>
+        <div class="rc-label" style="margin-top:10px">When the current item is too heavy (weight<sub>i</sub> &gt; w):</div>
+        <div class="rc-formula">K[i][w] = K[i&minus;1][w]</div>
+      </div>
+
+      <h4>What each part means in plain language:</h4>
+      <div class="proof-step">
+        <div class="proof-step-label" style="color:var(--red);background:rgba(244,110,110,.1);border-color:rgba(244,110,110,.3)">Exclude</div>
+        <div class="proof-step-body"><strong>K[i&minus;1][w]</strong> — We skip item i entirely. The best we can do is whatever was achievable using the first i&minus;1 items with the same capacity w. Nothing about item i changes the result.</div>
+      </div>
+      <div class="proof-step">
+        <div class="proof-step-label" style="color:var(--green);background:rgba(62,207,142,.1);border-color:rgba(62,207,142,.3)">Include</div>
+        <div class="proof-step-body"><strong>value<sub>i</sub> + K[i&minus;1][w &minus; weight<sub>i</sub>]</strong> — We pack item i. We gain its value immediately, and the remaining capacity shrinks by its weight. The best result for that remaining capacity, using only the earlier items, is given by K[i&minus;1][w &minus; weight<sub>i</sub>].</div>
+      </div>
+      <div class="proof-step" style="border-bottom:none">
+        <div class="proof-step-label" style="color:var(--accent);background:rgba(79,156,249,.1);border-color:rgba(79,156,249,.3)">max()</div>
+        <div class="proof-step-body">We always choose whichever option gives the <strong>higher total value</strong>. If including gives more, we include. If excluding is better, we exclude. We never guess — we compute both options and pick the best.</div>
+      </div>
+
+      <div class="modal-note">
+        &#128161; <strong>Base cases:</strong> K[0][w] = 0 for all w (no items, no value). K[i][0] = 0 for all i (zero capacity, cannot pack anything). Every other cell is built on top of these foundations.
+      </div>
+
+      <!-- B: Time Complexity -->
+      <h3>B &mdash; Time Complexity: O(nW)</h3>
+      <p>The DP solution fills a table with <strong>(n + 1)</strong> rows and <strong>(W + 1)</strong> columns, where n is the number of items and W is the knapsack capacity.</p>
+
+      <div class="modal-recurrence" style="border-left-color:var(--yellow)">
+        <div class="rc-label">Why O(nW):</div>
+        <div style="font-size:.82rem;color:#c0c8d8;line-height:1.8">
+          &bull; There are (n + 1) rows — one for zero items, then one for each of the n items.<br>
+          &bull; There are (W + 1) columns — one for each possible capacity from 0 to W.<br>
+          &bull; Every single cell is filled exactly once — we never revisit a cell.<br>
+          &bull; Filling each cell takes constant work: look up two values, take the max, write one result.<br>
+          &bull; Total cells = (n + 1) &times; (W + 1) &asymp; nW<br>
+          &bull; Therefore, total running time = <strong style="color:var(--yellow)">O(nW)</strong>.
+        </div>
+      </div>
+
+      <p>This is dramatically better than brute force O(2<sup>n</sup>). With n=20 and W=20, brute force checks over 1 million subsets. DP fills 20&times;20 = 400 cells. The table replaces the entire exponential search tree.</p>
+
+      <!-- C: Proof by Induction -->
+      <h3>C &mdash; Why DP Is Correct: A Simple Proof by Induction</h3>
+      <p>We will show that for every cell K[i][w], the value stored is exactly the maximum value achievable using the first i items with capacity w. This uses a technique called <strong>mathematical induction</strong> — we prove it is true for the smallest cases, then show it stays true as we build up.</p>
+
+      <h4>Base idea</h4>
+      <p>We want to show: K[i][w] = the correct optimal value for items 1 through i with capacity w. If we can show this is true starting from the simplest cases, and that it stays true every time we add a new item, then by the time we reach K[n][W] we know it holds the correct final answer.</p>
+
+      <div class="proof-step">
+        <div class="proof-step-label">Base case</div>
+        <div class="proof-step-body">
+          <strong>Row 0 (no items):</strong> K[0][w] = 0 for every capacity w. This is correct — with zero items available, the best value you can achieve is always 0, regardless of how much space the bag has.<br><br>
+          <strong>Column 0 (zero capacity):</strong> K[i][0] = 0 for every item count i. This is also correct — if the bag has zero capacity, you cannot pack anything, so the best value is always 0.
+        </div>
+      </div>
+
+      <div class="proof-step">
+        <div class="proof-step-label">Hypothesis</div>
+        <div class="proof-step-body">
+          <strong>Assume it works for all smaller subproblems.</strong> Specifically, assume that for all cells in rows 0 through i&minus;1, K[i&minus;1][w] already holds the correct optimal value for those items and that capacity. In other words: assume every cell above the current row is already correct.
+        </div>
+      </div>
+
+      <div class="proof-step">
+        <div class="proof-step-label">Induction step</div>
+        <div class="proof-step-body">
+          <strong>Now show K[i][w] is also correct.</strong> We consider item i and capacity w. There are exactly two possibilities in any valid selection of items:<br><br>
+          <strong>Case 1 — item i is NOT included:</strong> The optimal selection uses only items from 1 to i&minus;1. By our assumption, K[i&minus;1][w] already holds this value correctly.<br><br>
+          <strong>Case 2 — item i IS included</strong> (only possible if weight<sub>i</sub> &le; w): We gain value<sub>i</sub> from item i, and the remaining capacity is w &minus; weight<sub>i</sub>. The best we can do with that remaining capacity using items 1 to i&minus;1 is K[i&minus;1][w &minus; weight<sub>i</sub>], which is also already correct by assumption.<br><br>
+          We take the maximum of both cases: max(K[i&minus;1][w], value<sub>i</sub> + K[i&minus;1][w &minus; weight<sub>i</sub>]). Since both options are computed correctly, the maximum is also correct.
+        </div>
+      </div>
+
+      <div class="proof-step" style="border-bottom:none">
+        <div class="proof-step-label">Conclusion</div>
+        <div class="proof-step-body">
+          By induction, every cell K[i][w] is filled correctly. In particular, K[n][W] — the bottom-right corner of the table — holds the correct optimal value using all n items with the full capacity W. This is the answer we want.<br><br>
+          <strong>Complexity:</strong> We fill (n+1)(W+1) cells exactly once. Each fill is O(1). Total time = O(nW). Since this is much smaller than O(2<sup>n</sup>) for any reasonably bounded W, DP is the practical choice for solving 0/1 Knapsack.
+        </div>
+      </div>
+
+      <div class="modal-note" style="margin-top:16px;border-left-color:var(--green)">
+        &#10003; <strong>Summary:</strong> The recurrence is correct because every decision (include or exclude) uses previously computed optimal answers. The complexity is O(nW) because we fill each of the (n+1)(W+1) cells exactly once with constant-time work. The table is both a storage device and a proof that we never recompute anything.
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
