@@ -125,7 +125,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .sval2{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:800;color:var(--accent)}
 
 /* ── EXPLANATION BOX ── */
-.exbox{background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--r);overflow:hidden;transition:border-left-color 200ms ease,background 200ms ease;font-size:.82rem;line-height:1.75;min-height:100px}
+.exbox{background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--r);overflow:hidden;transition:border-left-color 200ms ease,background 200ms ease;font-size:.82rem;line-height:1.75;min-height:140px}
 .exbox .exh{display:flex;align-items:center;gap:8px;padding:7px 14px 6px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.2);font-size:.68rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.05em}
 .exbox .exb{padding:12px 14px 13px;animation:exenter 200ms ease}
 @keyframes exenter{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
@@ -402,6 +402,38 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .view-recurrence-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--bg2)}
 .view-recurrence-btn .vr-icon{width:32px;height:32px;background:rgba(79,156,249,.12);border:1px solid rgba(79,156,249,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
 
+/* ── STRUCTURED STEP EXPLANATION ── */
+.ex-structured{padding:2px 0;font-size:.82rem;line-height:1.7}
+.ex-step-title{font-size:.78rem;font-weight:800;color:var(--accent);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.07);letter-spacing:.01em}
+.ex-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem}
+.ex-row:last-child{border-bottom:none}
+.ex-label{color:var(--text2);font-size:.75rem;font-weight:600}
+.ex-val{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text);font-weight:700}
+.ex-option{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:9px 12px;margin:7px 0;font-size:.8rem;line-height:1.6}
+.exc-block{background:#1c0d0d;border-color:rgba(244,110,110,.35)}
+.inc-block{background:#0d1c14;border-color:rgba(62,207,142,.35)}
+.cmp-note{background:#0d1421;border-color:rgba(79,156,249,.35);color:var(--accent)}
+.ex-opt-label{font-weight:800;font-size:.76rem;margin-bottom:4px}
+.ex-num-exc{color:var(--red);font-weight:800;font-family:'JetBrains Mono',monospace}
+.ex-num-inc{color:var(--green);font-weight:800;font-family:'JetBrains Mono',monospace}
+.ex-compare-row{background:var(--bg3);border:1px solid rgba(79,156,249,.25);border-radius:6px;padding:8px 12px;font-size:.8rem;color:var(--accent);margin:7px 0;font-family:'JetBrains Mono',monospace}
+.ex-decision{font-size:.84rem;font-weight:800;padding:9px 12px;border-radius:6px;margin-top:8px;text-align:center}
+.inc-decision{background:#0d2218;color:var(--green);border:1px solid rgba(62,207,142,.4)}
+.exc-decision{background:#220d0d;color:var(--red);border:1px solid rgba(244,110,110,.4)}
+.ex-note{font-size:.76rem;color:var(--text2);padding:6px 0 2px;line-height:1.55;font-style:italic}
+
+/* ── SORTING MODAL ── */
+#sortingModal .modal-body h4{font-size:.88rem;font-weight:800;color:var(--yellow);margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+#sortingModal .modal-body h4::before{content:'';display:block;width:3px;height:12px;background:var(--yellow);border-radius:2px;flex-shrink:0}
+#sortingModal .modal-body .ss-highlight{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--yellow);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#c0c8d8;line-height:1.8}
+#sortingModal .modal-body .ss-highlight .ss-label{font-family:'Syne',sans-serif;font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-bottom:6px}
+#sortingModal .modal-body .ss-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;background:rgba(245,197,66,.12);border:1px solid rgba(245,197,66,.35);color:var(--yellow);padding:2px 9px;border-radius:5px}
+.ss-open-btn{display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 20px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;color:var(--text);transition:border-color var(--tr),background var(--tr),color var(--tr);width:100%}
+.ss-open-btn:hover{border-color:var(--yellow);color:var(--yellow);background:#1c1a0d}
+.ss-open-btn .ss-btn-icon{width:34px;height:34px;background:rgba(245,197,66,.12);border:1px solid rgba(245,197,66,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ss-open-btn .ss-btn-label{display:flex;flex-direction:column;gap:2px;text-align:left}
+.ss-open-btn .ss-btn-sub{font-size:.68rem;color:var(--text2);font-weight:400}
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -417,10 +449,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   <div class="topbar-brand">0/1 <span style="color:var(--accent)">Knapsack</span></div>
   <nav class="topbar-nav" id="mainTabs">
     <div class="tab active" data-tab="home">&#127968; Home</div>
-    <div class="tab" data-tab="visualizer">&#9654; Visualizer</div>
-    <div class="tab" data-tab="methods">&#128218; Methods</div>
-    <div class="tab" data-tab="comparison">&#9878; Comparison</div>
     <div class="tab" data-tab="examples">&#128065; Examples</div>
+    <div class="tab" data-tab="methods">&#128218; Methods</div>
+    <div class="tab" data-tab="visualizer">&#9654; Visualizer</div>
+    <div class="tab" data-tab="comparison">&#9878; Comparison</div>
     <div class="tab" data-tab="resources">&#127894; Resources</div>
   </nav>
   <div class="topbar-right">
@@ -518,26 +550,35 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     </div>
   </div>
 
+  <!-- Learning path label -->
+  <div style="max-width:900px;margin:0 auto;padding:0 40px 12px">
+    <div style="font-size:.63rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);display:flex;align-items:center;gap:8px"><span style="display:block;width:3px;height:10px;background:var(--accent);border-radius:2px"></span>Recommended learning order</div>
+  </div>
   <div class="home-nav-cards">
-    <div class="nav-card" onclick="switchTab('visualizer')">
-      <h3>&#9654; Visualizer</h3>
-      <p>Step through the DP table animation. Watch each cell get filled and understand the include vs exclude decision in real time.</p>
-    </div>
-    <div class="nav-card" onclick="switchTab('methods')">
-      <h3>&#128218; Methods</h3>
-      <p>Understand each solving approach — brute force, dynamic programming, and greedy — with clear explanations and complexity analysis.</p>
-    </div>
-    <div class="nav-card" onclick="switchTab('comparison')">
-      <h3>&#9878; Comparison</h3>
-      <p>Side-by-side comparison of all three approaches with a clear table showing complexity, optimality, and when each method is appropriate.</p>
-    </div>
-    <div class="nav-card" onclick="switchTab('examples')">
+    <div class="nav-card" onclick="switchTab('examples')" style="border-top:2px solid var(--green)">
+      <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px">Step 1 — Start here</div>
       <h3>&#128065; Examples</h3>
-      <p>Follow a complete walkthrough of the Abdul Bari example. See the brute force decision tree, DP table, and greedy step-by-step solution.</p>
+      <p>See the problem in action first. Follow a complete walkthrough of a concrete example before learning the theory.</p>
     </div>
-    <div class="nav-card" onclick="switchTab('resources')">
+    <div class="nav-card" onclick="switchTab('methods')" style="border-top:2px solid var(--accent)">
+      <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Step 2 — Learn the approaches</div>
+      <h3>&#128218; Methods</h3>
+      <p>Understand brute force, dynamic programming, and greedy — what each one does, why it works or fails, and when to use it.</p>
+    </div>
+    <div class="nav-card" onclick="switchTab('visualizer')" style="border-top:2px solid var(--purple)">
+      <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:6px">Step 3 — Interact</div>
+      <h3>&#9654; Visualizer</h3>
+      <p>Step through the DP table animation yourself. Watch each cell fill and see the include vs exclude decision explained in real time.</p>
+    </div>
+    <div class="nav-card" onclick="switchTab('comparison')" style="border-top:2px solid var(--yellow)">
+      <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow);margin-bottom:6px">Step 4 — Evaluate</div>
+      <h3>&#9878; Comparison</h3>
+      <p>Compare all three approaches side by side. See complexity tables, growth curves, and the formal recurrence proof.</p>
+    </div>
+    <div class="nav-card" onclick="switchTab('resources')" style="border-top:2px solid var(--teal)">
+      <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Step 5 — Further reading</div>
       <h3>&#127894; Resources</h3>
-      <p>Watch the recommended Abdul Bari lecture and learn more about dynamic programming in real-world applications.</p>
+      <p>Watch the recommended lecture and explore background material to reinforce your understanding of the concepts.</p>
     </div>
   </div>
 </div>
@@ -782,6 +823,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
           <p style="margin-top:8px">Base cases: K[0][w] = 0 for all w, and K[i][0] = 0 for all i. The final answer is K[n][W].</p>
         </div>
       </div>
+    </div>
+
+    <!-- Sorting & Searching section trigger -->
+    <div class="content-block" style="border-top:1px solid var(--border);padding-top:26px;margin-top:8px">
+      <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:8px"><span style="display:block;width:3px;height:10px;background:var(--yellow);border-radius:2px"></span>Sorting &amp; Searching in Knapsack</div>
+      <p style="font-size:.84rem;color:var(--text2);line-height:1.65;margin-bottom:16px">Sorting and searching are integral parts of two of the three algorithms above. Understanding exactly how and where they are used helps clarify the time complexity of each approach.</p>
+      <button class="ss-open-btn" onclick="document.getElementById('sortingModal').classList.add('open');document.body.style.overflow='hidden'">
+        <div class="ss-btn-icon">&#9993;</div>
+        <div class="ss-btn-label">
+          <span>Sorting &amp; Searching in Knapsack</span>
+          <span class="ss-btn-sub">Click to learn how sorting drives the Greedy algorithm and how DP uses searching</span>
+        </div>
+        <span style="margin-left:auto;font-size:.75rem;color:var(--text2);font-weight:400">&#8599;</span>
+      </button>
     </div>
 
   </div>
@@ -1361,7 +1416,7 @@ function buildSteps() {
   var steps = [], st = {lookups:0, comparisons:0, cells:0};
 
   steps.push({ type:'init', dp:cpDp(dp), pl:2, i:-1, w:-1,
-    ex:'Building a ' + (n+1) + 'x' + (W+1) + ' DP table. All cells start at 0. Row 0 = no items.',
+    ex:'<div class="ex-structured"><div class="ex-step-title">Initializing DP Table</div><div class="ex-row"><span class="ex-label">Table size</span><span class="ex-val">' + (n+1) + ' rows &times; ' + (W+1) + ' columns</span></div><div class="ex-row"><span class="ex-label">Row 0</span><span class="ex-val" style="color:var(--text2)">No items &mdash; all zeros (base case)</span></div><div class="ex-note">Every cell K[i][w] will hold the best value using the first i items with capacity w. We fill it row by row.</div></div>',
     action:'Initialize', stats:cpSt(st) });
 
   for (var i = 1; i <= n; i++) {
@@ -1374,7 +1429,7 @@ function buildSteps() {
         st.cells++;
         steps.push({ type:'fill', dp:cpDp(dp), pl:6, i:i, w:w, included:false,
           action:'Exclude (heavy)',
-          ex:'Item ' + i + ' (w=' + wi + ', v=' + vi + '): weight ' + wi + ' > capacity ' + w + '. Cannot fit. K[' + i + '][' + w + '] = K[' + (i-1) + '][' + w + '] = ' + dp[i][w] + '.',
+          ex:'<div class=\"ex-structured\"><div class=\"ex-step-title\">Step (i=' + i + ', w=' + w + ')</div><div class=\"ex-row\"><span class=\"ex-label\" style=\"color:var(--text2)\">Item ' + i + '</span><span class=\"ex-val\" style=\"color:var(--text2)\">weight = ' + wi + ', value = ' + vi + '</span></div><div class=\"ex-row ex-row-exc\"><span class=\"ex-label\">Item weight ' + wi + ' &gt; capacity ' + w + '</span><span class=\"ex-val\" style=\"color:var(--red)\">Cannot include &mdash; too heavy</span></div><div class=\"ex-option exc-block\"><div class=\"ex-opt-label\" style=\"color:var(--red)\">&#10007; EXCLUDE (forced)</div><div>K[i&minus;1][w] = K[' + (i-1) + '][' + w + '] = <span class=\"ex-num-exc\">' + dp[i][w] + '</span></div></div><div class=\"ex-decision exc-decision\">&#10132; K[' + i + '][' + w + '] = <strong>' + dp[i][w] + '</strong></div></div>',
           stats:cpSt(st) });
       } else {
         st.comparisons++;
@@ -1383,7 +1438,7 @@ function buildSteps() {
         st.lookups += 2;
         steps.push({ type:'compare', dp:cpDp(dp), pl:8, i:i, w:w, included:null,
           action:'Evaluating',
-          ex:'Item ' + i + ' (w=' + wi + ', v=' + vi + ') fits in capacity ' + w + '. Include=' + vi + '+K[' + (i-1) + '][' + (w-wi) + ']=' + vi + '+' + dp[i-1][w-wi] + '=' + inc + '  |  Exclude=K[' + (i-1) + '][' + w + ']=' + exc + '.',
+          ex:'<div class=\"ex-structured\"><div class=\"ex-step-title\">Step (i=' + i + ', w=' + w + ')</div><div class=\"ex-row\"><span class=\"ex-label\">Item ' + i + '</span><span class=\"ex-val\">weight = ' + wi + ', value = ' + vi + '</span></div><div class=\"ex-row\"><span class=\"ex-label\" style=\"color:var(--green)\">Item fits in capacity ' + w + '</span><span class=\"ex-val\" style=\"color:var(--accent)\">Comparing both options&hellip;</span></div><div class=\"ex-option exc-block\"><div class=\"ex-opt-label\" style=\"color:var(--red)\">&#10007; Option 1: EXCLUDE</div><div>K[i&minus;1][w] = K[' + (i-1) + '][' + w + '] = <span class=\"ex-num-exc\">' + exc + '</span></div></div><div class=\"ex-option inc-block\"><div class=\"ex-opt-label\" style=\"color:var(--green)\">&#10003; Option 2: INCLUDE</div><div>value + K[i&minus;1][w&minus;weight] = ' + vi + ' + K[' + (i-1) + '][' + (w-wi) + '] = ' + vi + ' + ' + dp[i-1][w-wi] + ' = <span class=\"ex-num-inc\">' + inc + '</span></div></div><div class=\"ex-note cmp-note\">&#8652; Comparing: max(<span class=\"ex-num-exc\">' + exc + '</span>, <span class=\"ex-num-inc\">' + inc + '</span>)</div></div>',
           stats:cpSt(st) });
         dp[i][w] = Math.max(inc, exc);
         st.cells++;
@@ -1391,15 +1446,15 @@ function buildSteps() {
         steps.push({ type:'fill', dp:cpDp(dp), pl:10, i:i, w:w, included:tookInc,
           action: tookInc ? 'Include item' : 'Exclude item',
           ex: tookInc
-            ? 'Include wins! max(' + inc + ', ' + exc + ') = ' + dp[i][w] + '. Item ' + i + ' added. K[' + i + '][' + w + '] = ' + dp[i][w] + '.'
-            : 'Exclude wins. max(' + inc + ', ' + exc + ') = ' + dp[i][w] + '. Skip item ' + i + '. K[' + i + '][' + w + '] = ' + dp[i][w] + '.',
+            ? '<div class=\"ex-structured\"><div class=\"ex-step-title\">Step (i=' + i + ', w=' + w + ')</div><div class=\"ex-row\"><span class=\"ex-label\">Item ' + i + '</span><span class=\"ex-val\">weight = ' + wi + ', value = ' + vi + '</span></div><div class=\"ex-option exc-block\"><div class=\"ex-opt-label\" style=\"color:var(--red)\">&#10007; Exclude = <span class=\"ex-num-exc\">' + exc + '</span></div></div><div class=\"ex-option inc-block\" style=\"border:2px solid var(--green)\"><div class=\"ex-opt-label\" style=\"color:var(--green)\">&#10003; Include = ' + vi + ' + ' + dp[i-1][w-wi] + ' = <span class=\"ex-num-inc\">' + inc + '</span></div></div><div class=\"ex-compare-row\">max(<span class=\"ex-num-exc\">' + exc + '</span>, <span class=\"ex-num-inc\">' + inc + '</span>) = <span class=\"ex-num-inc\">' + dp[i][w] + '</span> &larr; Include is larger</div><div class=\"ex-decision inc-decision\">&#10003; INCLUDE Item ' + i + ' &rarr; K[' + i + '][' + w + '] = <strong>' + dp[i][w] + '</strong></div></div>'
+            : '<div class=\"ex-structured\"><div class=\"ex-step-title\">Step (i=' + i + ', w=' + w + ')</div><div class=\"ex-row\"><span class=\"ex-label\">Item ' + i + '</span><span class=\"ex-val\">weight = ' + wi + ', value = ' + vi + '</span></div><div class=\"ex-option exc-block\" style=\"border:2px solid var(--red)\"><div class=\"ex-opt-label\" style=\"color:var(--red)\">&#10007; Exclude = <span class=\"ex-num-exc\">' + exc + '</span> &larr; Exclude is larger</div></div><div class=\"ex-option inc-block\"><div class=\"ex-opt-label\" style=\"color:var(--green)\">&#10003; Include = ' + vi + ' + ' + dp[i-1][w-wi] + ' = <span class=\"ex-num-inc\">' + inc + '</span></div></div><div class=\"ex-compare-row\">max(<span class=\"ex-num-exc\">' + exc + '</span>, <span class=\"ex-num-inc\">' + inc + '</span>) = <span class=\"ex-num-exc\">' + dp[i][w] + '</span></div><div class=\"ex-decision exc-decision\">&#10007; EXCLUDE Item ' + i + ' &rarr; K[' + i + '][' + w + '] = <strong>' + dp[i][w] + '</strong></div></div>',
           stats:cpSt(st) });
       }
     }
   }
 
   steps.push({ type:'tb-start', dp:cpDp(dp), pl:13, i:n, w:W, action:'Start traceback',
-    ex:'DP complete! Max value = K[' + n + '][' + W + '] = ' + dp[n][W] + '. Tracing back to find selected items.',
+    ex:'<div class=\"ex-structured\"><div class=\"ex-step-title\">DP Table Complete!</div><div class=\"ex-row\"><span class=\"ex-label\" style=\"color:var(--yellow)\">Optimal value</span><span class=\"ex-val\" style=\"color:var(--yellow);font-size:1.1rem;font-weight:800\">K[' + n + '][' + W + '] = ' + dp[n][W] + '</span></div><div class=\"ex-note\" style=\"color:var(--purple)\">&#8593; Now tracing back through the table to find which items were selected&hellip;</div></div>',
     stats:cpSt(st) });
 
   var tw = W, sel = [];
@@ -1408,12 +1463,12 @@ function buildSteps() {
       sel.unshift(i);
       var nw = tw - items[i-1].w;
       steps.push({ type:'tb-inc', dp:cpDp(dp), pl:17, i:i, w:tw, action:'Include i' + i,
-        ex:'K[' + i + '][' + tw + ']=' + dp[i][tw] + ' != K[' + (i-1) + '][' + tw + ']=' + dp[i-1][tw] + '. Item ' + i + ' (w=' + items[i-1].w + ', v=' + items[i-1].v + ') was included. Move to K[' + (i-1) + '][' + nw + '].',
+        ex:'<div class=\"ex-structured\"><div class=\"ex-step-title\">Traceback (row ' + i + ', cap ' + tw + ')</div><div class=\"ex-row\"><span class=\"ex-label\" style=\"color:var(--purple)\">K[' + i + '][' + tw + ']</span><span class=\"ex-val\">' + dp[i][tw] + '</span></div><div class=\"ex-row\"><span class=\"ex-label\" style=\"color:var(--purple)\">K[' + (i-1) + '][' + tw + ']</span><span class=\"ex-val\">' + dp[i-1][tw] + '</span></div><div class=\"ex-option inc-block\"><div>Values differ &rarr; <strong style=\"color:var(--green)\">Item ' + i + ' was INCLUDED</strong></div><div style=\"font-size:.78rem;color:var(--text2);margin-top:4px\">weight=' + items[i-1].w + ', value=' + items[i-1].v + ' &rarr; move to K[' + (i-1) + '][' + nw + ']</div></div></div>',
         selected:sel.slice(), stats:cpSt(st) });
       tw = nw;
     } else {
       steps.push({ type:'tb-skip', dp:cpDp(dp), pl:16, i:i, w:tw, action:'Skip i' + i,
-        ex:'K[' + i + '][' + tw + ']=' + dp[i][tw] + ' = K[' + (i-1) + '][' + tw + ']. Item ' + i + ' was NOT included. Move up to row ' + (i-1) + '.',
+        ex:'<div class=\"ex-structured\"><div class=\"ex-step-title\">Traceback (row ' + i + ', cap ' + tw + ')</div><div class=\"ex-row\"><span class=\"ex-label\" style=\"color:var(--purple)\">K[' + i + '][' + tw + ']</span><span class=\"ex-val\">' + dp[i][tw] + '</span></div><div class=\"ex-row\"><span class=\"ex-label\" style=\"color:var(--purple)\">K[' + (i-1) + '][' + tw + ']</span><span class=\"ex-val\">' + dp[i][tw] + '</span></div><div class=\"ex-option exc-block\"><div>Values equal &rarr; <strong style=\"color:var(--red)\">Item ' + i + ' was NOT included</strong></div><div style=\"font-size:.78rem;color:var(--text2);margin-top:4px\">Move up to row ' + (i-1) + '</div></div></div>',
         selected:sel.slice(), stats:cpSt(st) });
     }
   }
@@ -1421,7 +1476,7 @@ function buildSteps() {
   var totV = sel.reduce(function(a, idx) { return a + items[idx-1].v; }, 0);
   var totW = sel.reduce(function(a, idx) { return a + items[idx-1].w; }, 0);
   steps.push({ type:'done', dp:cpDp(dp), pl:20, i:-1, w:-1, action:'Done',
-    ex:'Optimal solution: Items {' + sel.join(', ') + '} — value=' + totV + ', weight=' + totW + '/' + W + ' (' + Math.round(totW/W*100) + '% full).',
+    ex:'<div class=\"ex-structured\"><div class=\"ex-step-title\" style=\"color:var(--yellow)\">&#9733; Optimal Solution Found!</div><div class=\"ex-row\"><span class=\"ex-label\">Items selected</span><span class=\"ex-val\" style=\"color:var(--green)\">{' + sel.join(', ') + '}</span></div><div class=\"ex-row\"><span class=\"ex-label\">Total value</span><span class=\"ex-val\" style=\"color:var(--yellow);font-size:1.1rem;font-weight:800\">' + totV + '</span></div><div class=\"ex-row\"><span class=\"ex-label\">Weight used</span><span class=\"ex-val\">' + totW + ' / ' + W + ' (' + Math.round(totW/W*100) + '%)</span></div></div>',
     selected:sel.slice(), stats:cpSt(st) });
 
   S.steps = steps; S.cur = -1; S.history = [];
@@ -1434,7 +1489,7 @@ function buildSteps() {
   document.getElementById('btnPlay').disabled  = false;
   document.getElementById('btnPause').disabled = false;
   setStatus('ready');
-  setEx('Built ' + steps.length + ' steps for ' + n + ' items, W=' + W + '. Click Step or Play.', 'init');
+  setEx('<div class=\"ex-structured\"><div class=\"ex-step-title\">Ready to animate</div><div class=\"ex-row\"><span class=\"ex-label\">Total steps</span><span class=\"ex-val\">' + steps.length + '</span></div><div class=\"ex-row\"><span class=\"ex-label\">Items</span><span class=\"ex-val\">' + n + '</span></div><div class=\"ex-row\"><span class=\"ex-label\">Capacity W</span><span class=\"ex-val\">' + W + '</span></div><div class=\"ex-note\">Press &#9655; Step to go one step at a time, or &#9654; Play to run automatically.</div></div>', 'init');
   updStats({lookups:0,comparisons:0,cells:0});
   drawLive([]);
 }
@@ -1663,6 +1718,8 @@ function setEx(text, type) {
 }
 
 function richEx(t) {
+  // If it's already structured HTML, pass through as-is
+  if (t && t.trim && t.trim().startsWith('<div')) return t;
   return t
     .replace(/K\[(\d+)\]\[(\d+)\]/g, '<span class="ec">K[$1][$2]</span>')
     .replace(/Item (\d+)/g, '<span class="ei">Item $1</span>')
@@ -1983,7 +2040,11 @@ function closeProofModal(e) {
 }
 // Close on Escape key
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeProofModal();
+  if (e.key === 'Escape') {
+    closeProofModal();
+    document.getElementById('sortingModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
 });
 
 window.addEventListener('load', init);
@@ -1991,6 +2052,55 @@ window.addEventListener('resize', function() { drawGrowth(); });
 </script>
 <!-- Hidden container for buildGreedy() output (used internally) -->
 <div id="greedyEx" style="display:none"></div>
+
+<!-- ═══════════════════════════════════════
+     MODAL: Sorting & Searching
+═══════════════════════════════════════ -->
+<div class="modal-overlay" id="sortingModal" onclick="(function(e){if(e.target===document.getElementById('sortingModal')){document.getElementById('sortingModal').classList.remove('open');document.body.style.overflow=''}})(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>&#9993; Sorting &amp; Searching Algorithms — Key Section</h2>
+      <div class="modal-close" onclick="document.getElementById('sortingModal').classList.remove('open');document.body.style.overflow=''" title="Close">&#10005;</div>
+    </div>
+    <div class="modal-body">
+
+      <p>Before we look at how each algorithm solves the 0/1 Knapsack problem, it is important to understand the role that <strong>sorting</strong> and <strong>searching</strong> play in the approaches we compare. These are not background details — they directly determine the time complexity and behaviour of each method.</p>
+
+      <h4>Sorting — Used in the Greedy Approach</h4>
+      <p>The greedy algorithm relies entirely on <strong>sorting items by their value-to-weight ratio</strong> in descending order before making any selection. This is not a trivial step — it determines the entire sequence of decisions the algorithm makes.</p>
+      <p>The sorting step uses a comparison-based algorithm such as <strong>Merge Sort</strong> or <strong>QuickSort</strong>, both of which run in <span class="ss-badge">O(n log n)</span> time. This is exactly where the greedy algorithm's overall time complexity of <span class="ss-badge">O(n log n)</span> comes from — the selection step itself is just O(n), but it is <em>dominated</em> by the sort.</p>
+
+      <div class="ss-highlight">
+        <div class="ss-label">Example — Sorting by v/w ratio</div>
+        Three items with ratios: 3.0, 5.0, 4.0<br>
+        After sorting (descending): <strong style="color:var(--yellow)">5.0, 4.0, 3.0</strong><br>
+        Greedy picks items in exactly that order until capacity is exceeded.
+      </div>
+
+      <p>So the behaviour of the greedy method depends <em>directly</em> on the sorting result being correct. A different item order would produce a different (and potentially worse) selection. Sorting is not just a pre-processing step — it is the algorithm's decision-making foundation.</p>
+
+      <h4>Searching — Used in the DP Approach</h4>
+      <p>Dynamic Programming does not sort items. Instead, it uses a form of <strong>structured table lookup</strong> — a searching process — to retrieve previously computed sub-answers in O(1) time.</p>
+      <p>When filling cell K[i][w], the algorithm must look up two previously computed values:</p>
+      <div class="ss-highlight">
+        <div class="ss-label">DP Lookup pattern</div>
+        <strong style="color:var(--accent)">Exclude:</strong> look up K[i&minus;1][w] &nbsp;&nbsp;(row above, same column)<br>
+        <strong style="color:var(--green)">Include:</strong> look up K[i&minus;1][w &minus; w<sub>i</sub>] &nbsp;&nbsp;(row above, earlier column)
+      </div>
+      <p>Each of these is a direct table lookup — an O(1) operation. The DP table acts as a <strong>search cache</strong>: rather than re-exploring every combination, the algorithm searches the table for the answer to each sub-problem, finding it instantly. This is the mechanism that replaces O(2<sup>n</sup>) brute-force exploration with O(nW) efficient filling.</p>
+      <p>Additionally, during <strong>traceback</strong>, the algorithm performs a sequential O(n) search through the table rows — walking backwards from K[n][W] to identify which items were selected.</p>
+
+      <h4>Summary</h4>
+      <div class="ss-highlight" style="border-left-color:var(--accent)">
+        <div class="ss-label">At a glance</div>
+        <strong style="color:var(--yellow)">Greedy:</strong> Sort by v/w ratio → <span class="ss-badge">O(n log n)</span> dominated by sort<br>
+        <strong style="color:var(--accent)">DP Fill:</strong> Table lookup per cell → <span class="ss-badge">O(1)</span> per lookup, <span class="ss-badge">O(nW)</span> total<br>
+        <strong style="color:var(--purple)">DP Traceback:</strong> Sequential row search → <span class="ss-badge">O(n)</span>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════
      MODAL: Recurrence and Proof
@@ -2106,6 +2216,55 @@ window.addEventListener('resize', function() { drawGrowth(); });
 </script>
 <!-- Hidden container for buildGreedy() output (used internally) -->
 <div id="greedyEx" style="display:none"></div>
+
+<!-- ═══════════════════════════════════════
+     MODAL: Sorting & Searching
+═══════════════════════════════════════ -->
+<div class="modal-overlay" id="sortingModal" onclick="(function(e){if(e.target===document.getElementById('sortingModal')){document.getElementById('sortingModal').classList.remove('open');document.body.style.overflow=''}})(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>&#9993; Sorting &amp; Searching Algorithms — Key Section</h2>
+      <div class="modal-close" onclick="document.getElementById('sortingModal').classList.remove('open');document.body.style.overflow=''" title="Close">&#10005;</div>
+    </div>
+    <div class="modal-body">
+
+      <p>Before we look at how each algorithm solves the 0/1 Knapsack problem, it is important to understand the role that <strong>sorting</strong> and <strong>searching</strong> play in the approaches we compare. These are not background details — they directly determine the time complexity and behaviour of each method.</p>
+
+      <h4>Sorting — Used in the Greedy Approach</h4>
+      <p>The greedy algorithm relies entirely on <strong>sorting items by their value-to-weight ratio</strong> in descending order before making any selection. This is not a trivial step — it determines the entire sequence of decisions the algorithm makes.</p>
+      <p>The sorting step uses a comparison-based algorithm such as <strong>Merge Sort</strong> or <strong>QuickSort</strong>, both of which run in <span class="ss-badge">O(n log n)</span> time. This is exactly where the greedy algorithm's overall time complexity of <span class="ss-badge">O(n log n)</span> comes from — the selection step itself is just O(n), but it is <em>dominated</em> by the sort.</p>
+
+      <div class="ss-highlight">
+        <div class="ss-label">Example — Sorting by v/w ratio</div>
+        Three items with ratios: 3.0, 5.0, 4.0<br>
+        After sorting (descending): <strong style="color:var(--yellow)">5.0, 4.0, 3.0</strong><br>
+        Greedy picks items in exactly that order until capacity is exceeded.
+      </div>
+
+      <p>So the behaviour of the greedy method depends <em>directly</em> on the sorting result being correct. A different item order would produce a different (and potentially worse) selection. Sorting is not just a pre-processing step — it is the algorithm's decision-making foundation.</p>
+
+      <h4>Searching — Used in the DP Approach</h4>
+      <p>Dynamic Programming does not sort items. Instead, it uses a form of <strong>structured table lookup</strong> — a searching process — to retrieve previously computed sub-answers in O(1) time.</p>
+      <p>When filling cell K[i][w], the algorithm must look up two previously computed values:</p>
+      <div class="ss-highlight">
+        <div class="ss-label">DP Lookup pattern</div>
+        <strong style="color:var(--accent)">Exclude:</strong> look up K[i&minus;1][w] &nbsp;&nbsp;(row above, same column)<br>
+        <strong style="color:var(--green)">Include:</strong> look up K[i&minus;1][w &minus; w<sub>i</sub>] &nbsp;&nbsp;(row above, earlier column)
+      </div>
+      <p>Each of these is a direct table lookup — an O(1) operation. The DP table acts as a <strong>search cache</strong>: rather than re-exploring every combination, the algorithm searches the table for the answer to each sub-problem, finding it instantly. This is the mechanism that replaces O(2<sup>n</sup>) brute-force exploration with O(nW) efficient filling.</p>
+      <p>Additionally, during <strong>traceback</strong>, the algorithm performs a sequential O(n) search through the table rows — walking backwards from K[n][W] to identify which items were selected.</p>
+
+      <h4>Summary</h4>
+      <div class="ss-highlight" style="border-left-color:var(--accent)">
+        <div class="ss-label">At a glance</div>
+        <strong style="color:var(--yellow)">Greedy:</strong> Sort by v/w ratio → <span class="ss-badge">O(n log n)</span> dominated by sort<br>
+        <strong style="color:var(--accent)">DP Fill:</strong> Table lookup per cell → <span class="ss-badge">O(1)</span> per lookup, <span class="ss-badge">O(nW)</span> total<br>
+        <strong style="color:var(--purple)">DP Traceback:</strong> Sequential row search → <span class="ss-badge">O(n)</span>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════
      MODAL: Recurrence and Proof
